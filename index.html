@@ -273,11 +273,26 @@ ul.lesson-list li::before{content:'▸';position:absolute;left:0;color:var(--gre
 
 /* ── MATRIX EASTER EGG ── */
 #matrixCanvas{
-  display:none;position:fixed;inset:0;z-index:9997;pointer-events:none;opacity:0.18
+  display:none;position:fixed;inset:0;z-index:9997;pointer-events:none;
+  opacity:0;transition:opacity 0.4s ease
 }
 #eggTrigger{cursor:pointer;transition:transform 0.2s}
 #eggTrigger:hover{transform:scale(1.1)}
 #eggTrigger:active{transform:scale(0.95)}
+
+/* Smooth theme transition on ALL elements */
+#shell, #topbar, #sidebar, #main, #layout,
+.module-header, .lesson-item, .module-block,
+.home-module-card, .stat-box, .col-card,
+.code-block, .info-box, .q-opt, .quiz-result,
+.lesson-topbar, #lessonContent, .nav-btn,
+.lesson-h1, .lesson-h2, .hl, .hl-amber,
+.logo-name, .logo-icon, .xp-fill, .xp-bar,
+p, .lesson-lead, .lesson-done-badge {
+  transition:background-color 0.6s ease, color 0.5s ease,
+             border-color 0.5s ease, box-shadow 0.4s ease,
+             text-shadow 0.5s ease;
+}
 
 body.matrix-mode{
   --bg:#000800;--bg2:#010d01;--bg3:#011501;--panel:#000a00;
@@ -286,7 +301,6 @@ body.matrix-mode{
   --amber:#00ff41;--amber-glow:#00ff4130;--purple:#00ee33;
   --text:#00cc33;--text-dim:#006600;--text-mute:#003300;
   --correct:#00ff41;--wrong:#ff0000;
-  transition:background 0.4s,color 0.4s
 }
 body.matrix-mode #matrixCanvas{display:block}
 body.matrix-mode .logo-icon{
@@ -1674,6 +1688,7 @@ updateProgress();
 // ═══════════════════════════════════════════════════════════
 let matrixActive = false;
 let matrixRAF = null;
+let matrixTimer = null;
 const matrixCanvas = document.getElementById('matrixCanvas');
 const mCtx = matrixCanvas.getContext('2d');
 const matrixChars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ0123456789ABCDEF<>{}[]|\\/#$%@!?';
@@ -1692,7 +1707,6 @@ function drawMatrix() {
   mCtx.font = '14px JetBrains Mono, monospace';
   drops.forEach((y, i) => {
     const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-    // Lead character — bright white-green
     mCtx.fillStyle = Math.random() > 0.95 ? '#ffffff' : '#00ff41';
     mCtx.shadowBlur = 8;
     mCtx.shadowColor = '#00ff41';
@@ -1704,21 +1718,44 @@ function drawMatrix() {
   matrixRAF = requestAnimationFrame(drawMatrix);
 }
 
+function stopRain() {
+  // Fade canvas out
+  matrixCanvas.style.opacity = '0';
+  setTimeout(() => {
+    cancelAnimationFrame(matrixRAF);
+    matrixRAF = null;
+    mCtx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+    matrixCanvas.style.display = 'none';
+  }, 400); // wait for fade-out transition
+}
+
 function toggleMatrixMode() {
   matrixActive = !matrixActive;
-  document.body.classList.toggle('matrix-mode', matrixActive);
+  clearTimeout(matrixTimer);
+
   if (matrixActive) {
+    // Show canvas, fade in rain, apply theme
+    matrixCanvas.style.display = 'block';
+    requestAnimationFrame(() => {
+      matrixCanvas.style.opacity = '0.18'; // triggers CSS fade-in
+    });
+    document.body.classList.add('matrix-mode');
     initMatrix();
     drawMatrix();
     showToast('// MATRIX MODE ACTIVATED');
+
+    // Stop rain after 2.5s — theme stays
+    matrixTimer = setTimeout(stopRain, 2500);
   } else {
-    cancelAnimationFrame(matrixRAF);
-    mCtx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+    // Revert theme, stop rain immediately
+    document.body.classList.remove('matrix-mode');
+    stopRain();
     showToast('// MATRIX MODE DEACTIVATED');
   }
 }
 
-window.addEventListener('resize', () => { if (matrixActive) initMatrix(); });
+window.addEventListener('resize', () => { if (matrixRAF) initMatrix(); });
+
 </script>
 </body>
 </html>
