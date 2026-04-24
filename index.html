@@ -423,9 +423,9 @@ const CURRICULUM = [
 <p>In a <span class="hl-red">DNS poisoning</span> attack, an attacker corrupts the DNS response so that <span class="hl-amber">yourbank.com</span> returns their fake server's IP instead of the real one — and you never know. <span class="hl-red">DNS hijacking</span> goes further: the attacker compromises your router or DNS server directly.</p>
 <div class="info-box danger"><div class="info-box-label">// SECURITY IMPLICATION</div>If an attacker controls DNS, they control where you go on the internet. This is why encrypted DNS (<strong>DoH — DNS over HTTPS</strong>) exists.</div>`,
     quiz:[
-      {q:"What does an IP address do?",opts:["Encrypts your traffic","Uniquely identifies a device on a network","Speeds up your connection","Stores your passwords"],answer:1,exp:"An IP address is a unique identifier for a device on a network — like a postal address for your computer."},
-      {q:"What is DNS used for?",opts:["Blocking hackers","Translating domain names into IP addresses","Encrypting your connection","Speeding up downloads"],answer:1,exp:"DNS is the internet's phone book — it converts human-readable names like google.com into IP addresses."},
-      {q:"In a DNS poisoning attack, what does the attacker do?",opts:["Shuts down the DNS server","Makes your connection slower","Returns a fake IP so you visit the wrong site","Steals your password"],answer:2,exp:"DNS poisoning corrupts DNS responses so a legitimate domain returns the attacker's IP, redirecting you to a fake site."}
+      {q:"What does an IP address do?",opts:["Encrypts your traffic and protects data in transit","Uniquely identifies a device connected to a network","Speeds up your connection to the nearest server","Stores your login credentials for websites"],answer:1,exp:"An IP address is a unique identifier for a device on a network — like a postal address for your computer."},
+      {q:"What is DNS used for?",opts:["Blocking malicious traffic before it reaches your device","Translating domain names into IP addresses computers use","Encrypting your connection to protect sensitive data","Caching web pages locally to speed up browsing"],answer:1,exp:"DNS is the internet's phone book — it converts human-readable names like google.com into IP addresses."},
+      {q:"In a DNS poisoning attack, what does the attacker do?",opts:["Shuts down the DNS server entirely to cause outages","Slows down DNS responses to create network congestion","Returns a fake IP so you visit the attacker's server instead","Steals your credentials by intercepting DNS queries"],answer:2,exp:"DNS poisoning corrupts DNS responses so a legitimate domain returns the attacker's IP, redirecting you to a fake site."}
     ]},
     {id:'l1-2',title:'Protocols: TCP, UDP & HTTP',content:`
 <div class="lesson-h1">Protocols: TCP, UDP & HTTP</div>
@@ -446,9 +446,9 @@ Client → Server: <span class="keyword">ACK</span>      <span class="comment">/
   <div class="col-card"><div class="col-card-title">// HTTPS</div><ul class="lesson-list"><li>Encrypted via TLS</li><li>Verifies server identity</li><li>The standard for all modern sites</li></ul></div>
 </div>`,
     quiz:[
-      {q:"What does the TCP three-way handshake do?",opts:["Encrypts the connection","Establishes a reliable connection before sending data","Sends data as fast as possible","Blocks unauthorized connections"],answer:1,exp:"SYN → SYN-ACK → ACK establishes a reliable connection between two parties before any actual data is sent."},
-      {q:"A SYN flood exploits which mechanism?",opts:["DNS lookups","HTTP requests","TCP's three-way handshake","UDP routing"],answer:2,exp:"A SYN flood sends massive numbers of SYN packets without completing the handshake, exhausting the server's resources with half-open connections."},
-      {q:"Why is HTTP dangerous for sensitive data?",opts:["It's too slow","It doesn't work on all browsers","It transmits data in plain text readable by anyone on the network","It doesn't support file uploads"],answer:2,exp:"HTTP sends everything unencrypted. Anyone between you and the server can read the traffic."}
+      {q:"What does the TCP three-way handshake do?",opts:["Encrypts the connection using a shared session key","Establishes a reliable connection before any data is sent","Sends all data as fast as possible without verification","Blocks all incoming connections from unauthorized IPs"],answer:1,exp:"SYN → SYN-ACK → ACK establishes a reliable connection between two parties before any actual data is sent."},
+      {q:"A SYN flood exploits which mechanism?",opts:["DNS lookups to overwhelm name resolution servers","HTTP requests to crash web server processes","TCP's three-way handshake to exhaust server resources","UDP broadcasts to saturate all network bandwidth"],answer:2,exp:"A SYN flood sends massive numbers of SYN packets without completing the handshake, exhausting the server's resources."},
+      {q:"Why is HTTP dangerous for sensitive data?",opts:["It routes traffic through third-party relay servers automatically","It does not support modern encryption cipher suites","It transmits everything in plain text readable by anyone","It stores your credentials insecurely in browser cookies"],answer:2,exp:"HTTP sends everything unencrypted. Anyone between you and the server can read the traffic."}
     ]},
     {id:'l1-3',title:'Ports & Services',content:`
 <div class="lesson-h1">Ports & Services</div>
@@ -478,9 +478,9 @@ nmap -sV <span class="string">192.168.1.1</span>
 </div>
 <div class="info-box tip"><div class="info-box-label">// DEFENSE</div>Close every port you don't need. A database (3306) should <strong>never</strong> be exposed to the public internet — only accessible from your application server internally.</div>`,
     quiz:[
-      {q:"What does a port number identify?",opts:["Network speed","A specific service on a computer","Encryption type","Physical server location"],answer:1,exp:"A port identifies which specific service or process should receive incoming traffic on a computer."},
-      {q:"What is port scanning used for?",opts:["Speeding up connections","Encrypting traffic","Discovering which services are running on a target","Compressing data"],answer:2,exp:"Port scanning probes a target to find open ports, revealing which services are running and potential attack surfaces."},
-      {q:"Why is a database port exposed to the internet dangerous?",opts:["It makes the database slower","Attackers can directly attack the database bypassing your application","It uses too much bandwidth","It disables encryption"],answer:1,exp:"A database exposed to the internet can be directly targeted — brute-forced, exploited, or queried — bypassing all application-level security."}
+      {q:"What does a port number identify?",opts:["The speed and bandwidth of a network connection","A specific service or process running on a computer","The encryption algorithm being used for the traffic","The physical geographic location of a server"],answer:1,exp:"A port identifies which specific service or process should receive incoming traffic on a computer."},
+      {q:"What is port scanning used for?",opts:["Speeding up packet delivery across the network","Encrypting traffic between two communicating hosts","Discovering which services are running on a target","Compressing data to reduce bandwidth consumption"],answer:2,exp:"Port scanning probes a target to find open ports, revealing which services are running and potential attack surfaces."},
+      {q:"Why is a database port exposed to the internet dangerous?",opts:["It significantly reduces database query performance","Attackers can directly target the database bypassing your app","It causes excessive bandwidth usage on the network","It disables all encryption on database connections"],answer:1,exp:"A database exposed to the internet can be directly targeted — brute-forced, exploited, or queried — bypassing all application-level security."}
     ]}
   ]
 },
@@ -501,9 +501,9 @@ nmap -sV <span class="string">192.168.1.1</span>
 <p><strong>Protection:</strong> <span class="hl-amber">redundancy</span>, backups, DDoS protection, load balancing.</p>
 <div class="info-box"><div class="info-box-label">// APPLY IT</div>For any attack you read about, ask: Confidentiality (data seen), Integrity (data changed), or Availability (data inaccessible)? Often it's more than one.</div>`,
     quiz:[
-      {q:"A hacker steals a database of user emails. Which CIA principle is violated?",opts:["Availability","Integrity","Confidentiality","All three"],answer:2,exp:"Confidentiality is violated when data is seen by unauthorized parties."},
-      {q:"Ransomware encrypts your files. Which CIA principle is primarily violated?",opts:["Confidentiality","Integrity","Availability","None"],answer:2,exp:"Ransomware is primarily an Availability attack — it makes your data inaccessible."},
-      {q:"An attacker changes a bank transaction from €100 to €10,000. Which principle?",opts:["Confidentiality","Availability","Integrity","None"],answer:2,exp:"Integrity is violated when data is tampered with by an unauthorized party."}
+      {q:"A hacker steals a database of user emails. Which CIA principle is violated?",opts:["Availability — users can no longer access their email accounts","Integrity — the email data was altered by the attacker","Confidentiality — unauthorized parties accessed private data","All three principles are violated at exactly the same time"],answer:2,exp:"Confidentiality is violated when data is seen by unauthorized parties."},
+      {q:"Ransomware encrypts your files. Which CIA principle is primarily violated?",opts:["Confidentiality — the attacker reads all your private files","Integrity — your files are permanently corrupted by encryption","Availability — your data is inaccessible until you pay ransom","None — ransomware only affects performance not security"],answer:2,exp:"Ransomware is primarily an Availability attack — it makes your data inaccessible."},
+      {q:"An attacker changes a bank transaction from €100 to €10,000. Which principle?",opts:["Confidentiality — the transaction details were read by attacker","Availability — the transaction service became temporarily unavailable","Integrity — the data was tampered with by an unauthorized party","None — changing numbers doesn't violate security principles"],answer:2,exp:"Integrity is violated when data is tampered with by an unauthorized party."}
     ]},
     {id:'l2-2',title:'Attack Surfaces & Threat Actors',content:`
 <div class="lesson-h1">Attack Surfaces & Threat Actors</div>
@@ -526,9 +526,9 @@ nmap -sV <span class="string">192.168.1.1</span>
   <div class="col-card"><div class="col-card-title">// BLACK / WHITE / GREY</div>Black = criminal. White = ethical/paid. Grey = breaks in but discloses.</div>
 </div>`,
     quiz:[
-      {q:"What is an 'attack surface'?",opts:["Damage caused by an attack","All the points where an attacker could enter a system","Network speed during an attack","Type of malware used"],answer:1,exp:"The attack surface is the total sum of all potential entry points an attacker could exploit."},
-      {q:"Which attacker type is typically most sophisticated and patient?",opts:["Script kiddies","Hacktivists","Nation-state / APT actors","Cybercriminals"],answer:2,exp:"Nation-state and APT groups have massive resources, high skill, and can stay hidden in networks for months or years."},
-      {q:"An employee accidentally emails customer data to the wrong person. What type of threat?",opts:["Nation-state attack","Script kiddie attack","Unintentional insider threat","Hacktivist attack"],answer:2,exp:"Careless actions by authorized users are one of the most common causes of data breaches — an unintentional insider threat."}
+      {q:"What is an 'attack surface'?",opts:["The total damage caused after a successful cyberattack","All the points where an attacker could try to enter a system","The speed of your network measured during an active attack","The specific type of malware used in a given intrusion"],answer:1,exp:"The attack surface is the total sum of all potential entry points an attacker could exploit."},
+      {q:"Which attacker type is typically most sophisticated and patient?",opts:["Script kiddies using automated tools without understanding them","Hacktivists motivated by political ideology and social causes","Nation-state and APT actors with massive resources and time","Cybercriminals focused entirely on quick financial gain"],answer:2,exp:"Nation-state and APT groups have massive resources, high skill, and can stay hidden in networks for months or years."},
+      {q:"An employee accidentally emails customer data to the wrong person. What type?",opts:["A nation-state attack targeting sensitive company information","A script kiddie using automated vulnerability scanning tools","An unintentional insider threat caused by a careless action","A hacktivist attack targeting the company's customer data"],answer:2,exp:"Careless actions by authorized users are one of the most common causes of data breaches — an unintentional insider threat."}
     ]},
     {id:'l2-3',title:'The Cyber Kill Chain',content:`
 <div class="lesson-h1">The Cyber Kill Chain</div>
@@ -555,9 +555,9 @@ nmap -sV <span class="string">192.168.1.1</span>
 </ul>
 <div class="info-box"><div class="info-box-label">// KEY INSIGHT</div>Stopping an attack at Delivery is far better than responding after Actions. Earlier = less damage. This is why email filters and user training matter so much.</div>`,
     quiz:[
-      {q:"In the Kill Chain, what is 'Reconnaissance'?",opts:["Installing malware","Researching and gathering info about the target","Encrypting files","Sending a phishing email"],answer:1,exp:"Reconnaissance is the first stage — researching the target to find vulnerabilities and identify key people."},
-      {q:"Why is stopping an attack at 'Delivery' better than at 'Actions'?",opts:["It's easiest","The attacker hasn't gained access yet — less damage","It saves server resources","Attackers give up more easily"],answer:1,exp:"The earlier you stop an attack, the less damage occurs. At Delivery, no exploitation has happened. By Actions, attackers may have been inside for weeks."},
-      {q:"What is Command & Control (C2)?",opts:["When the phishing email is sent","A government anti-cybercrime agency","Infrastructure attackers use to remotely control compromised systems","The process of encrypting stolen data"],answer:2,exp:"C2 is the infrastructure attackers use to issue commands to malware on compromised systems — like a remote control for the attack."}
+      {q:"In the Kill Chain, what is 'Reconnaissance'?",opts:["Installing malware on the target system for persistence","Researching and gathering information about the target","Encrypting the target's files to demand a ransom payment","Sending a phishing email to deliver the malicious payload"],answer:1,exp:"Reconnaissance is the first stage — researching the target to find vulnerabilities and identify key people."},
+      {q:"Why is stopping at 'Delivery' better than stopping at 'Actions'?",opts:["Delivery is technically the easiest stage to intercept","The attacker hasn't gained access yet so damage is minimal","It saves significantly more server processing resources","Attackers tend to give up more easily at the delivery stage"],answer:1,exp:"The earlier you stop an attack, the less damage occurs. At Delivery, no exploitation has happened yet."},
+      {q:"What is Command & Control (C2)?",opts:["The moment when the initial phishing email is sent out","A government agency that investigates cybercrime globally","Infrastructure attackers use to remotely control compromised systems","The process of encrypting and exfiltrating the stolen data"],answer:2,exp:"C2 is the infrastructure attackers use to issue commands to malware on compromised systems."}
     ]}
   ]
 },
@@ -589,9 +589,9 @@ nmap -sV <span class="string">192.168.1.1</span>
 <p><span class="hl">Pretexting</span> — fabricated scenario to extract info. <span class="hl">Baiting</span> — USB drives in parking lots labeled "Salary Data". <span class="hl">Tailgating</span> — following someone through a secure door.</p>
 <div class="info-box danger"><div class="info-box-label">// BEC — BUSINESS EMAIL COMPROMISE</div>"Hi Sarah, wire €50,000 urgently for a deal closing today. CEO approved. Don't call, I'm in a meeting." This attack costs companies billions annually.</div>`,
     quiz:[
-      {q:"What makes spear phishing more dangerous than regular phishing?",opts:["Stronger malware","Targets specific individuals with personalized content","Bypasses antivirus","Requires no technical skill"],answer:1,exp:"Spear phishing is targeted and personalized — the attacker researches the victim first, making it much harder to detect."},
-      {q:"An email says 'Account suspended in 24h!' and asks you to log in. What tactic?",opts:["Baiting","Tailgating","Urgency-based phishing","Pretexting"],answer:2,exp:"Urgency is a core phishing tactic — it pressures you to act before thinking critically."},
-      {q:"A USB labeled 'Company Salaries 2025' is in a parking lot. What attack?",opts:["Vishing","Tailgating","Baiting","Whaling"],answer:2,exp:"Baiting uses physical media placed where targets will find them. Curiosity does the rest."}
+      {q:"What makes spear phishing more dangerous than regular phishing?",opts:["It uses more powerful malware payloads than regular attacks","It targets specific individuals with personalized convincing content","It automatically bypasses antivirus and EDR solutions","It requires no technical skill whatsoever to launch successfully"],answer:1,exp:"Spear phishing is targeted and personalized — the attacker researches the victim first, making it much harder to detect."},
+      {q:"An email says 'Account suspended in 24h!' and asks you to log in. What tactic?",opts:["Baiting using physical media placed where targets will find it","Tailgating to gain unauthorized physical access to buildings","Urgency-based phishing to pressure victims into acting fast","Pretexting using a fabricated scenario to extract information"],answer:2,exp:"Urgency is a core phishing tactic — it pressures you to act before thinking critically."},
+      {q:"A USB labeled 'Company Salaries 2025' is in a parking lot. What attack?",opts:["Vishing where attacker calls pretending to be IT support","Tailgating to physically follow someone through a secure door","Baiting using physical media to trick curious employees","Whaling targeting executives with high-value spear phishing"],answer:2,exp:"Baiting uses physical media placed where targets will find them. Curiosity does the rest."}
     ]},
     {id:'l3-2',title:'Malware & Ransomware',content:`
 <div class="lesson-h1">Malware & Ransomware</div>
@@ -623,9 +623,9 @@ nmap -sV <span class="string">192.168.1.1</span>
   <li>Antivirus / EDR</li>
 </ul>`,
     quiz:[
-      {q:"What makes a worm different from a virus?",opts:["Worms only target Windows","Worms spread on their own without needing a host file","Worms are less dangerous","Worms only encrypt files"],answer:1,exp:"Unlike a virus (needs a host), a worm is self-replicating and spreads automatically across networks."},
-      {q:"Why do ransomware attackers store the encryption key on their own server?",opts:["Faster encryption","You can't recover files without paying them","Avoids antivirus","Less processing power needed"],answer:1,exp:"If the key were on your machine, you could retrieve it without paying. Remote storage gives attackers leverage."},
-      {q:"What is 'double extortion' in ransomware?",opts:["Charging double ransom after payment","Encrypting files AND exfiltrating data to publish if you don't pay","Using two types of malware","Attacking the same company twice"],answer:1,exp:"Double extortion steals data before encrypting — even if you restore from backups, they can still publish your stolen data."}
+      {q:"What makes a worm different from a virus?",opts:["Worms only target Windows systems while viruses are cross-platform","Worms spread across networks on their own without a host file","Worms are significantly less dangerous and much harder to detect","Worms can only encrypt files while viruses focus on stealing data"],answer:1,exp:"Unlike a virus (needs a host), a worm is self-replicating and spreads automatically across networks."},
+      {q:"Why do ransomware attackers store the encryption key on their own server?",opts:["It makes the encryption significantly faster and more reliable","You cannot recover your files without paying them for the key","It helps the malware avoid detection by antivirus software","Local storage would require significantly more processing power"],answer:1,exp:"If the key were on your machine, you could retrieve it without paying. Remote storage gives attackers leverage."},
+      {q:"What is 'double extortion' in ransomware?",opts:["Charging victims double the original ransom after they pay","Encrypting files and exfiltrating data threatening to publish it","Deploying two completely different types of malware simultaneously","Attacking the same organization twice in quick succession"],answer:1,exp:"Double extortion steals data before encrypting — even if you restore from backups, they can still publish your data."}
     ]},
     {id:'l3-3',title:'SQL Injection',content:`
 <div class="lesson-h1">SQL Injection</div>
@@ -658,9 +658,9 @@ cursor.execute(query, (username,))
 <span class="comment">// Input treated as data, never as SQL code</span>
 </div>`,
     quiz:[
-      {q:"What makes SQL injection possible?",opts:["Weak passwords","Server being too slow","User input treated as SQL code instead of data","Outdated browser"],answer:2,exp:"SQL injection happens when user input is directly inserted into SQL queries, allowing attackers to inject their own SQL code."},
-      {q:"What does ' OR '1'='1 do?",opts:["Crashes the database","Creates a condition that is always true, bypassing the WHERE clause","Deletes records","Encrypts the database"],answer:1,exp:"'1'='1' is always true, making the entire WHERE clause true — returning all rows regardless of username/password."},
-      {q:"What is the primary defense against SQL injection?",opts:["Changing passwords regularly","Using HTTPS","Parameterized queries (prepared statements)","Blocking all user input"],answer:2,exp:"Parameterized queries separate SQL code from user data — the database treats input as literal data, not executable SQL."}
+      {q:"What makes SQL injection possible?",opts:["Weak passwords that are easily guessed or brute forced","Servers being too slow to validate all incoming input","User input treated as SQL code instead of raw data","Users running outdated browsers that bypass server validation"],answer:2,exp:"SQL injection happens when user input is directly inserted into SQL queries, allowing attackers to inject their own SQL code."},
+      {q:"What does ' OR '1'='1 do in a SQL injection attack?",opts:["Crashes the database server causing a denial of service","Creates a condition that is always true bypassing authentication","Permanently deletes all records from the targeted table","Encrypts the entire database making it completely inaccessible"],answer:1,exp:"'1'='1' is always true, making the entire WHERE clause true — returning all rows regardless of credentials."},
+      {q:"What is the primary defense against SQL injection?",opts:["Changing database passwords on a regular rotation schedule","Using HTTPS to encrypt all traffic between app and database","Using parameterized queries to separate code from user data","Blocking all user input from ever reaching the application"],answer:2,exp:"Parameterized queries separate SQL code from user data — the database treats input as literal data, not executable SQL."}
     ]},
     {id:'l3-4',title:'Man-in-the-Middle Attacks',content:`
 <div class="lesson-h1">Man-in-the-Middle Attacks</div>
@@ -720,9 +720,9 @@ Ciphertext + <span class="keyword">same Key</span> → Plaintext
 <p>Common algorithms: <span class="hl-amber">RSA</span>, <span class="hl-amber">ECC</span>. Slower than symmetric, so used to exchange symmetric keys rather than encrypt bulk data.</p>
 <div class="info-box tip"><div class="info-box-label">// HOW HTTPS COMBINES BOTH</div>Asymmetric encryption securely exchanges a symmetric session key. That key then handles the fast bulk encryption. Security + speed.</div>`,
     quiz:[
-      {q:"What is the main problem with symmetric encryption?",opts:["Too slow","You need to securely share the same key with the other party first","Can only encrypt short messages","Doesn't work over the internet"],answer:1,exp:"The key distribution problem: to securely send the key, you'd already need a secure channel. Asymmetric encryption solves this."},
-      {q:"To send someone an encrypted message using asymmetric encryption, which key do you use?",opts:["Your private key","Your public key","Their private key","Their public key"],answer:3,exp:"Encrypt with the recipient's public key. Only their private key can decrypt it — and only they have it."},
-      {q:"Why does HTTPS use both asymmetric and symmetric?",opts:["Required by law","Asymmetric securely exchanges a symmetric key, then symmetric handles fast bulk encryption","Symmetric is too hackable","Asymmetric only works for small files"],answer:1,exp:"Asymmetric solves key exchange but is slow. Symmetric is fast but needs a shared key. HTTPS combines both."}
+      {q:"What is the main problem with symmetric encryption?",opts:["It is too computationally slow for modern hardware requirements","You must securely share the same key with the other party first","It can only encrypt very short messages efficiently","It simply does not work reliably over internet connections"],answer:1,exp:"The key distribution problem: to securely send the key, you'd already need a secure channel. Asymmetric encryption solves this."},
+      {q:"To send someone an encrypted message, which key do you use?",opts:["Your own private key to prove the message came from you","Your own public key shared freely on the internet","The recipient's private key stored securely on their device","The recipient's public key so only they can decrypt it"],answer:3,exp:"Encrypt with the recipient's public key. Only their private key can decrypt it — and only they have it."},
+      {q:"Why does HTTPS use both asymmetric and symmetric encryption?",opts:["It is legally required to use both by international standards","Asymmetric exchanges the key securely, symmetric handles fast bulk data","Symmetric alone is too easily broken by modern computers","Asymmetric encryption only works for very small file sizes"],answer:1,exp:"Asymmetric solves key exchange but is slow. Symmetric is fast but needs a shared key. HTTPS combines both."}
     ]},
     {id:'l4-2',title:'Hashing & Password Storage',content:`
 <div class="lesson-h1">Hashing & Password Storage</div>
@@ -749,9 +749,9 @@ hash = bcrypt(<span class="string">"mypassword"</span> + salt)
 </div>
 <p>Good hashing algorithms: <span class="hl-amber">bcrypt</span>, <span class="hl-amber">Argon2</span>, <span class="hl-amber">scrypt</span> — intentionally slow to make brute force impractical.</p>`,
     quiz:[
-      {q:"Why can't you reverse a hash to get the original password?",opts:["Hashes are encrypted","Hash functions are mathematically one-way","Too much RAM needed","Hash is too short"],answer:1,exp:"Hash functions are cryptographically one-way by design — no mathematical operation reliably produces the original input from the hash."},
-      {q:"What does a 'salt' do in password hashing?",opts:["Type of encryption","Penalty for weak passwords","Random value added before hashing to prevent rainbow table attacks","Speeds up login"],answer:2,exp:"A salt is a random value added to each password before hashing, making every hash unique even for identical passwords."},
-      {q:"A site stores passwords in plain text and gets hacked. Worst consequence?",opts:["Password file corrupted","Attackers have exact passwords, usable on other sites immediately","Account gets slower","Site goes offline"],answer:1,exp:"Plain text means attackers get your actual password. They immediately try it on your email, bank, and other accounts."}
+      {q:"Why can't you reverse a hash to get the original password?",opts:["Hashes are actually encrypted and require a key to decrypt","Hash functions are mathematically designed to be one-way","Reversing a hash would require too much computer memory","The hash output is simply too short to recover the input"],answer:1,exp:"Hash functions are cryptographically one-way by design — no mathematical operation reliably produces the original input."},
+      {q:"What does a 'salt' do in password hashing?",opts:["Defines the specific encryption algorithm used for hashing","Adds a penalty score when users choose weak passwords","Adds a unique random value per user to defeat rainbow tables","Speeds up the login process by caching previous hash results"],answer:2,exp:"A salt is a random value added to each password before hashing, making every hash unique even for identical passwords."},
+      {q:"A site stores passwords in plain text and gets hacked. Worst consequence?",opts:["Your password file becomes permanently corrupted and unreadable","Attackers have your exact password usable on other sites immediately","Your account runs noticeably slower after the breach occurs","The compromised site goes completely offline for weeks"],answer:1,exp:"Plain text means attackers get your actual password. They immediately try it on your email, bank, and other accounts."}
     ]},
     {id:'l4-3',title:'How TLS/HTTPS Works',content:`
 <div class="lesson-h1">How TLS/HTTPS Works</div>
@@ -779,9 +779,9 @@ hash = bcrypt(<span class="string">"mypassword"</span> + salt)
 <p>An <span class="hl">SSL certificate</span> proves a server is who it claims to be. Issued by a <span class="hl-amber">Certificate Authority (CA)</span> — a trusted third party that verifies domain ownership. Your browser has a pre-loaded list of trusted CAs.</p>
 <div class="info-box danger"><div class="info-box-label">// SSL STRIPPING ATTACK</div>Attackers intercept traffic before HTTPS is established and serve HTTP instead — removing encryption. Defense: <strong>HSTS</strong> forces browsers to always use HTTPS.</div>`,
     quiz:[
-      {q:"What three things does TLS provide?",opts:["Speed, reliability, compression","Confidentiality, integrity, and authentication","Encryption, routing, DNS","Privacy, anonymity, speed"],answer:1,exp:"TLS: Confidentiality (encrypted), Integrity (tamper-proof), Authentication (real server verified via certificates)."},
-      {q:"What is a Certificate Authority?",opts:["Government encryption agency","Trusted third party that issues SSL certificates verifying domain ownership","Encryption algorithm","Malicious website database"],answer:1,exp:"CAs verify domain ownership and issue signed SSL certificates. Your browser trusts a pre-loaded list of CAs, forming the chain of trust."},
-      {q:"Why doesn't TLS directly transmit the session key?",opts:["Too large to send","Interceptors could capture it — Diffie-Hellman lets both sides derive the same key independently","Session key doesn't exist until after connection","Symmetric keys can't be transmitted"],answer:1,exp:"Directly transmitting the key would let anyone intercepting the handshake read all subsequent traffic. Diffie-Hellman solves this."}
+      {q:"What three things does TLS provide?",opts:["Speed, reliability, and traffic compression for faster loading","Confidentiality, integrity, and authentication for secure connections","Encryption, routing, and DNS resolution for web traffic","Privacy, anonymity, and significantly faster connection speeds"],answer:1,exp:"TLS: Confidentiality (encrypted), Integrity (tamper-proof), Authentication (real server verified via certificates)."},
+      {q:"What is a Certificate Authority (CA)?",opts:["A government agency that licenses and regulates encryption use","A trusted third party that issues SSL certificates verifying domains","A specific type of encryption algorithm used within HTTPS","A database that tracks and blocks known malicious websites"],answer:1,exp:"CAs verify domain ownership and issue signed SSL certificates. Your browser trusts a pre-loaded list of CAs."},
+      {q:"Why doesn't TLS directly transmit the session key?",opts:["The session key would simply be too large to transmit","Interceptors could capture it — DH lets both sides derive it independently","The session key doesn't actually exist until after connection","Symmetric keys fundamentally cannot be transmitted over any network"],answer:1,exp:"Directly transmitting the key would let anyone intercepting the handshake read all subsequent traffic. Diffie-Hellman solves this."}
     ]}
   ]
 },
@@ -810,9 +810,9 @@ ALLOW  tcp  10.0.0.0/8 → server:22  <span class="comment"># SSH — internal o
 <div class="lesson-h2">IDS vs IPS</div>
 <p><span class="hl">IDS</span> (Intrusion Detection) monitors and <em>alerts</em>. <span class="hl">IPS</span> (Intrusion Prevention) monitors and <em>blocks</em>. Neither alone is sufficient — defense in depth stacks multiple layers.</p>`,
     quiz:[
-      {q:"What does a firewall do?",opts:["Encrypts all traffic","Speeds up connections","Monitors and controls network traffic based on rules","Scans for malware"],answer:2,exp:"A firewall controls which traffic is allowed in/out of a network based on configured rules."},
-      {q:"What is 'default deny'?",opts:["Block all traffic including internal","Block everything by default, explicitly allow only what's needed","Allow most traffic, deny specific threats","Only apply rules during business hours"],answer:1,exp:"Default deny means the baseline is to block all traffic. You add specific rules to allow only what you need — far safer than trying to block all known threats."},
-      {q:"Difference between IDS and IPS?",opts:["IDS for networks, IPS for applications","IDS detects and alerts, IPS detects and actively blocks","IDS is hardware, IPS is software","No difference"],answer:1,exp:"IDS monitors and alerts — you still respond manually. IPS also actively blocks suspicious traffic in real time."}
+      {q:"What does a firewall do?",opts:["Encrypts all network traffic to protect data in transit","Speeds up network connections by caching common requests","Monitors and controls network traffic based on configured rules","Scans all files on your computer for malware infections"],answer:2,exp:"A firewall controls which traffic is allowed in/out of a network based on configured rules."},
+      {q:"What is the 'default deny' principle in firewalls?",opts:["Always block all traffic including trusted internal communications","Block everything by default, explicitly allow only what's needed","Allow most traffic but actively deny specific known threats","Only apply security rules during normal business hours"],answer:1,exp:"Default deny means the baseline is to block all traffic. You add specific rules to allow only what you need."},
+      {q:"What is the difference between IDS and IPS?",opts:["IDS is designed for networks while IPS is for applications","IDS detects and alerts on suspicious traffic, IPS actively blocks it","IDS is physical hardware while IPS is a software solution","IDS and IPS are just different names for the exact same thing"],answer:1,exp:"IDS monitors and alerts — you still respond manually. IPS also actively blocks suspicious traffic in real time."}
     ]},
     {id:'l5-2',title:'Authentication & Zero Trust',content:`
 <div class="lesson-h1">Authentication & Zero Trust</div>
@@ -897,9 +897,9 @@ ALLOW  tcp  10.0.0.0/8 → server:22  <span class="comment"># SSH — internal o
 </div>
 <div class="info-box danger"><div class="info-box-label">// REAL RISK</div>Many breaches start with a developer committing AWS keys to a public GitHub repo, or a forgotten subdomain running an outdated vulnerable server. Recon often finds more than the actual attack.</div>`,
     quiz:[
-      {q:"What is OSINT?",opts:["Malware that steals data","Intelligence from publicly available sources","Password cracking tool","Government surveillance program"],answer:1,exp:"OSINT is information gathered from public sources — social media, websites, DNS records — without any unauthorized access."},
-      {q:"What makes Shodan dangerous?",opts:["Launches cyberattacks automatically","Indexes internet-connected devices and their exposed services, making vulnerable systems easy to find","Stores stolen passwords","Bypasses firewalls"],answer:1,exp:"Shodan lets anyone search for exposed devices, services, and their versions — trivially finding misconfigured databases and unpatched servers."},
-      {q:"Developer commits AWS credentials to public GitHub. What type of risk?",opts:["SQL injection","OSINT / credential exposure","Ransomware","DDoS"],answer:1,exp:"Attackers actively scan GitHub for accidentally committed secrets. Many breaches start this way."}
+      {q:"What is OSINT?",opts:["Specialized malware that silently collects and exfiltrates data","Intelligence gathered exclusively from publicly available sources","A dedicated tool for cracking passwords using wordlists","A classified government surveillance and intelligence program"],answer:1,exp:"OSINT is information gathered from public sources — social media, websites, DNS records — without any unauthorized access."},
+      {q:"What makes Shodan dangerous from a security perspective?",opts:["It automatically launches cyberattacks against vulnerable systems","It indexes internet-connected devices making vulnerable systems easy to find","It maintains a database of previously stolen user passwords","It can silently bypass firewalls and network security controls"],answer:1,exp:"Shodan lets anyone search for exposed devices, services, and their versions — trivially finding misconfigured databases and unpatched servers."},
+      {q:"A developer commits AWS credentials to a public GitHub repo. What risk?",opts:["An SQL injection risk directly exposing the backend database","An OSINT credential exposure risk that attackers actively scan for","A ransomware risk that could encrypt all cloud storage buckets","A DDoS risk that could overwhelm the company's servers"],answer:1,exp:"Attackers actively scan GitHub for accidentally committed secrets. Many breaches start this way."}
     ]},
     {id:'l6-3',title:'Common Pentest Tools',content:`
 <div class="lesson-h1">Common Pentest Tools</div>
@@ -926,9 +926,9 @@ PORT   STATE SERVICE VERSION
 </div>
 <div class="info-box tip"><div class="info-box-label">// PRACTICE</div>TryHackMe.com (beginner), HackTheBox.com (advanced), VulnHub.com (local VMs), OverTheWire.org (wargames). All legal, purpose-built environments.</div>`,
     quiz:[
-      {q:"What is Burp Suite primarily used for?",opts:["Cracking WiFi passwords","Network port scanning","Intercepting and testing web app HTTP traffic","Capturing network packets"],answer:2,exp:"Burp Suite is the standard tool for web application pentesting — proxying HTTP/HTTPS to intercept, modify, and replay requests."},
-      {q:"What does Nmap do?",opts:["Cracks password hashes","Discovers hosts, open ports, and services on a network","Intercepts WiFi","Generates phishing emails"],answer:1,exp:"Nmap scans for open ports, identifies running services and versions, and can fingerprint operating systems."},
-      {q:"Why practice on TryHackMe rather than random websites?",opts:["Better tools","Legal purpose-built environments — hacking real systems without authorization is illegal","Faster networks","Better programming education"],answer:1,exp:"Pentesting requires authorization. TryHackMe and HackTheBox provide legal, designed-for-learning environments."}
+      {q:"What is Burp Suite primarily used for?",opts:["Cracking WiFi WPA2 passwords by capturing handshakes","Performing network port scans to discover open services","Intercepting and testing web application HTTP traffic","Capturing and analyzing raw packets at the network level"],answer:2,exp:"Burp Suite is the standard tool for web application pentesting — proxying HTTP/HTTPS to intercept, modify, and replay requests."},
+      {q:"What does Nmap do?",opts:["Cracks password hashes using GPU-accelerated computation","Discovers hosts, open ports, and running services on a network","Intercepts and decrypts WiFi traffic on local networks","Generates convincing phishing emails targeting specific users"],answer:1,exp:"Nmap scans for open ports, identifies running services and versions, and can fingerprint operating systems."},
+      {q:"Why practice on TryHackMe rather than random websites?",opts:["TryHackMe has significantly better and more powerful hacking tools","It provides legal environments — hacking real systems requires authorization","TryHackMe has much faster network speeds than real targets","It teaches better programming skills alongside security concepts"],answer:1,exp:"Pentesting requires authorization. TryHackMe and HackTheBox provide legal, designed-for-learning environments."}
     ]}
   ]
 },
@@ -957,9 +957,9 @@ PORT   STATE SERVICE VERSION
 </ul>
 <div class="info-box"><div class="info-box-label">// IMPACT</div>Morris Worm (1988), MS-Blaster (2003), countless CVEs. Despite being 35+ years old, buffer overflows are still found in production software today.</div>`,
     quiz:[
-      {q:"What is a buffer overflow?",opts:["Server receives too many connections","Data written to a buffer exceeds its size and overwrites adjacent memory","Network packet too large","RAM is full"],answer:1,exp:"A buffer overflow occurs when more data is written than a buffer can hold. Excess data overwrites adjacent memory, potentially corrupting control data."},
-      {q:"What can overwriting the stack return address let an attacker do?",opts:["Steal the session key","Redirect program execution to run arbitrary code","Change only the username field","Modify firewall rules"],answer:1,exp:"The return address tells the program where to continue after a function. Overwriting it lets an attacker redirect execution to their own code."},
-      {q:"What does ASLR do?",opts:["Prevents all overflows","Encrypts memory","Randomizes memory addresses so attackers can't predict where to inject code","Scans for malware"],answer:2,exp:"ASLR randomizes memory layout each run — making it much harder to reliably exploit a buffer overflow."}
+      {q:"What is a buffer overflow?",opts:["When a server receives too many simultaneous connection requests","When data written to a buffer exceeds its size overwriting adjacent memory","When a network packet is too large to transmit over a link","When a system's RAM becomes completely full during operation"],answer:1,exp:"A buffer overflow occurs when more data is written than a buffer can hold. Excess data overwrites adjacent memory."},
+      {q:"What can overwriting the stack return address let an attacker do?",opts:["Steal the current TLS session key used for the connection","Redirect program execution flow to run their arbitrary code","Modify only the username field stored in the application","Change the server's firewall rules to allow more traffic"],answer:1,exp:"The return address tells the program where to continue after a function. Overwriting it lets an attacker redirect execution."},
+      {q:"What does ASLR (Address Space Layout Randomization) do?",opts:["Detects and prevents all buffer overflow attempts automatically","Encrypts memory contents to protect sensitive data in RAM","Randomizes memory addresses so attackers cannot predict locations","Continuously scans process memory for known malware signatures"],answer:2,exp:"ASLR randomizes memory layout each run — making it much harder to reliably exploit a buffer overflow."}
     ]},
     {id:'l7-2',title:'Privilege Escalation',content:`
 <div class="lesson-h1">Privilege Escalation</div>
@@ -984,9 +984,9 @@ cat /etc/crontab               <span class="comment"># Cron jobs running as root
 env                            <span class="comment"># Secrets in environment?</span>
 </div>`,
     quiz:[
-      {q:"What is 'vertical' privilege escalation?",opts:["Moving laterally between servers","Moving from low-privilege to high-privilege (user to admin)","Accessing another user's files","Escalating a DDoS"],answer:1,exp:"Vertical privilege escalation moves up the permission hierarchy — from a regular user to administrator/root."},
-      {q:"An attacker exploits a SUID binary. What are they trying to do?",opts:["Encrypt the filesystem","Escalate from low-privilege user to root","Launch a DDoS","Modify firewall rules"],answer:1,exp:"SUID binaries run with the file owner's permissions (often root). Misconfigured ones can be exploited to run commands as root."},
-      {q:"Why does least privilege limit damage from privilege escalation?",opts:["Prevents all exploitation","Makes systems faster","Limits what an attacker can do even if they compromise an account — minimizes blast radius","Automatically patches vulnerabilities"],answer:2,exp:"Least privilege means accounts only have minimum needed permissions. Compromised low-privilege accounts can do far less damage, and escalation paths are fewer."}
+      {q:"What is 'vertical' privilege escalation?",opts:["Moving laterally between different servers in the same network","Moving from a low-privilege account to a high-privilege one","Accessing another user's data at the same permission level","Escalating a DDoS attack to overwhelm additional targets"],answer:1,exp:"Vertical privilege escalation moves up the permission hierarchy — from a regular user to administrator/root."},
+      {q:"An attacker exploits a SUID binary on Linux. What are they trying to do?",opts:["Permanently encrypt the entire filesystem to demand ransom","Escalate from a low-privilege user account to root access","Launch a distributed denial-of-service attack on other targets","Remotely modify the server's network firewall configuration"],answer:1,exp:"SUID binaries run with the file owner's permissions (often root). Misconfigured ones can be exploited to run commands as root."},
+      {q:"Why does least privilege limit damage from privilege escalation?",opts:["It prevents all exploitation attempts on the system entirely","It makes the system run significantly faster and more efficiently","It limits attacker capabilities even when an account is compromised","It automatically detects and patches vulnerabilities in real time"],answer:2,exp:"Least privilege means accounts only have minimum needed permissions. Compromised low-privilege accounts can do far less damage."}
     ]},
     {id:'l7-3',title:'MITRE ATT&CK Framework',content:`
 <div class="lesson-h1">MITRE ATT&CK Framework</div>
@@ -1094,9 +1094,9 @@ Set-Cookie: session=abc123; HttpOnly; Secure
 </ul>
 <div class="info-box"><div class="info-box-label">// CSRF vs XSS</div>XSS injects code that runs in the victim's browser on your site. CSRF forges requests from the victim's browser to your site. Different attack — different defense.</div>`,
     quiz:[
-      {q:"What does a CSRF attack exploit?",opts:["SQL database","The fact that browsers automatically send cookies with every request to a site","JavaScript injection","Weak passwords"],answer:1,exp:"CSRF exploits automatic cookie sending — the browser always attaches cookies to matching requests, so the server can't distinguish the attacker's forged request from a real one."},
-      {q:"What does a CSRF token prevent?",opts:["XSS attacks","SQL injection","Forged cross-site requests — attacker can't make a valid request without knowing the unique token","Password brute force"],answer:2,exp:"CSRF tokens are unique values embedded in forms. The server validates them — an attacker who can't read your page can't know the token, so their forged request fails."},
-      {q:"What does the SameSite cookie attribute do?",opts:["Encrypts the cookie","Prevents JavaScript from reading the cookie","Instructs the browser not to send the cookie on cross-site requests","Sets a secure transmission requirement"],answer:2,exp:"SameSite tells the browser to only send the cookie when the request originates from the same site — blocking most CSRF attacks without needing tokens."}
+      {q:"What does a CSRF attack exploit?",opts:["SQL databases by injecting malicious queries through web forms","Browsers automatically sending cookies with every matching request","JavaScript injection to run malicious code in the victim's browser","Weak passwords that are reused across multiple websites"],answer:1,exp:"CSRF exploits automatic cookie sending — the browser always attaches cookies to matching requests, making forged requests look legitimate."},
+      {q:"What does a CSRF token prevent?",opts:["XSS attacks by blocking script injection in all user inputs","SQL injection by automatically sanitizing database queries","Forged cross-site requests — attacker can't submit without the valid token","Password brute force by limiting login attempts per IP address"],answer:2,exp:"CSRF tokens are unique values embedded in forms. An attacker who can't read your page can't know the token."},
+      {q:"What does the SameSite cookie attribute do?",opts:["Encrypts the cookie value using the server's private key","Prevents JavaScript from reading or modifying cookie contents","Instructs the browser not to send the cookie on cross-site requests","Requires the cookie to only be transmitted over HTTPS connections"],answer:2,exp:"SameSite tells the browser to only send the cookie when the request originates from the same site — blocking most CSRF attacks."}
     ]},
     {id:'l8-3',title:'IDOR & Broken Authentication',content:`
 <div class="lesson-h1">IDOR & Broken Authentication</div>
@@ -1125,9 +1125,9 @@ GET /api/user/<span class="keyword">1</span>/profile
 </ul>
 <div class="info-box tip"><div class="info-box-label">// DEFENSE — IDOR</div>Always enforce authorization server-side: "does this user have permission to access this specific resource?" Never trust client-supplied IDs without checking ownership.</div>`,
     quiz:[
-      {q:"What is an IDOR vulnerability?",opts:["Injecting SQL into database queries","Accessing objects by changing IDs without server-side permission checks","Stealing session cookies via JavaScript","Forging cross-site requests"],answer:1,exp:"IDOR lets attackers access other users' data by changing IDs (numbers, filenames) in requests when the server doesn't verify ownership."},
-      {q:"You change /api/order/100 to /api/order/101 and see another customer's order. What is this?",opts:["SQL injection","Privilege escalation","IDOR vulnerability","XSS attack"],answer:2,exp:"This is a classic IDOR — the server returned data for ID 101 without checking if you own that order."},
-      {q:"Which is a broken authentication vulnerability?",opts:["Storing passwords as bcrypt hashes","No account lockout allowing unlimited password guessing","Requiring MFA for login","Using HTTPS for all authentication traffic"],answer:1,exp:"No account lockout allows attackers to try unlimited passwords (brute force). This is a classic broken authentication implementation flaw."}
+      {q:"What is an IDOR vulnerability?",opts:["Injecting malicious SQL code into unprotected database queries","Accessing other users' objects by changing IDs without permission checks","Stealing session cookies via injected JavaScript on the page","Forging authenticated cross-site requests to perform actions"],answer:1,exp:"IDOR lets attackers access other users' data by changing IDs in requests when the server doesn't verify ownership."},
+      {q:"You change /api/order/100 to /api/order/101 and see another customer's order. This is?",opts:["An SQL injection vulnerability in the order retrieval query","A privilege escalation gaining elevated access to the system","An IDOR vulnerability — server didn't check ownership of order 101","An XSS attack injecting script into the order API endpoint"],answer:2,exp:"This is a classic IDOR — the server returned data for ID 101 without checking if you own that order."},
+      {q:"Which of these is a broken authentication vulnerability?",opts:["Storing all password hashes using the bcrypt algorithm securely","No account lockout allowing unlimited password guessing attempts","Requiring multi-factor authentication for every user login","Using HTTPS for all authentication and session management traffic"],answer:1,exp:"No account lockout allows attackers to try unlimited passwords — a classic broken authentication implementation flaw."}
     ]}
   ]
 },
@@ -1168,9 +1168,9 @@ kill -9 1234    <span class="comment"># Force kill process by PID</span>
 </ul>
 <div class="info-box tip"><div class="info-box-label">// GET STARTED</div>Install Kali Linux in VirtualBox (free). It runs alongside your Windows or Mac. OverTheWire's Bandit wargame (overthewire.org/wargames/bandit) is built to teach Linux command line through security challenges.</div>`,
     quiz:[
-      {q:"What does 'ls -la' do?",opts:["Delete all files","List files including hidden ones with permissions and details","Show network connections","Kill all running processes"],answer:1,exp:"ls -la lists files in the current directory with full details (permissions, owner, size) and includes hidden files (those starting with a dot)."},
-      {q:"Which command shows open ports and listening services on Linux?",opts:["cat /etc/passwd","grep -r password /","netstat -tulnp","find / -perm -4000"],answer:2,exp:"netstat -tulnp (or ss -tulnp) shows all open TCP/UDP ports, what process is listening, and on which address."},
-      {q:"Why do security professionals primarily use Linux?",opts:["It's easier to use than Windows","Most security tools are Linux-first, most target servers run Linux, and it's fully transparent","It's required by law","It's free"],answer:1,exp:"Linux dominates security work — security tools are built for it, target servers run it, and its transparency lets you see exactly what's happening at every level."}
+      {q:"What does 'ls -la' do?",opts:["Permanently deletes all files in the current directory","Lists files including hidden ones with full permission details","Displays all active network connections and open ports","Forcefully kills all currently running system processes"],answer:1,exp:"ls -la lists files in the current directory with full details (permissions, owner, size) and includes hidden files."},
+      {q:"Which command shows open ports and listening services on Linux?",opts:["cat /etc/passwd to view all user account information","grep -r password / to search for stored credentials","netstat -tulnp to display all open ports and listeners","find / -perm -4000 to locate all SUID binaries on the system"],answer:2,exp:"netstat -tulnp (or ss -tulnp) shows all open TCP/UDP ports, what process is listening, and on which address."},
+      {q:"Why do security professionals primarily use Linux?",opts:["It has a more intuitive graphical interface than Windows","Most security tools are Linux-first and most target servers run Linux","Government regulations require using Linux for all security work","Linux is always free while other operating systems cost money"],answer:1,exp:"Linux dominates security work — security tools are built for it, target servers run it, and its transparency lets you see everything."}
     ]},
     {id:'l9-2',title:'File Permissions & Users',content:`
 <div class="lesson-h1">File Permissions & Users</div>
@@ -1247,9 +1247,9 @@ mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords"
 </ul>
 <div class="info-box danger"><div class="info-box-label">// PASS THE HASH</div>On Windows, you often don't need to crack a password hash to use it. Tools like Mimikatz let attackers authenticate using just the hash — "Pass the Hash." This is why password rotation alone isn't enough.</div>`,
     quiz:[
-      {q:"What is Active Directory?",opts:["A Windows file manager","Microsoft's central system for managing users, computers, and permissions across an organization","A type of firewall","A backup system"],answer:1,exp:"Active Directory is the central identity and access management system in Windows enterprise environments. Compromising it means controlling the entire organization."},
-      {q:"What is LSASS and why do attackers target it?",opts:["A network monitoring service","A Windows process that holds credential material in memory — tools like Mimikatz extract passwords from it","A firewall process","A backup service"],answer:1,exp:"LSASS (Local Security Authority Subsystem Service) manages authentication and holds cached credentials in memory. Attackers dump it to extract plaintext passwords and hashes."},
-      {q:"What is a 'Pass the Hash' attack?",opts:["Cracking a password hash using a rainbow table","Authenticating to a system using just the password hash without needing to crack it","Intercepting password hashes in transit","A type of SQL injection"],answer:1,exp:"Pass the Hash uses the password hash directly for authentication — no cracking needed. This is possible because Windows NTLM authentication accepts hashes directly."}
+      {q:"What is Active Directory?",opts:["A built-in Windows file manager for organizing documents","Microsoft's central system for managing users and permissions across an org","A type of network firewall built directly into Windows Server","A Windows backup system used for disaster recovery purposes"],answer:1,exp:"Active Directory is the central identity and access management system in Windows enterprise environments."},
+      {q:"What is LSASS and why do attackers target it?",opts:["A Windows network service that monitors and logs traffic","A Windows process that holds credential material in memory","A Windows firewall process that filters all inbound connections","A Windows backup service that stores encrypted system data"],answer:1,exp:"LSASS manages authentication and holds cached credentials in memory. Attackers dump it to extract plaintext passwords and hashes."},
+      {q:"What is a 'Pass the Hash' attack?",opts:["Cracking a password hash offline using a GPU cluster","Authenticating to systems using just the hash without cracking it","Intercepting password hashes as they traverse the network","A type of SQL injection specifically targeting password hash storage"],answer:1,exp:"Pass the Hash uses the password hash directly for authentication — no cracking needed. Windows NTLM authentication accepts hashes directly."}
     ]}
   ]
 },
@@ -1318,9 +1318,9 @@ mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords"
 </ul>
 <div class="info-box tip"><div class="info-box-label">// PRO TIP</div>After every CTF, read the writeups for challenges you couldn't solve. This is where the real learning happens — understanding solutions you couldn't reach yet builds skills faster than anything else.</div>`,
     quiz:[
-      {q:"What is the goal in a CTF competition?",opts:["Hack a real company","Find hidden 'flag' strings by solving security challenges","Build the most secure system","Write the most lines of code"],answer:1,exp:"CTF competitions challenge participants to find hidden flags by exploiting vulnerabilities, solving puzzles, or breaking cryptography — each flag is worth points."},
-      {q:"Which CTF category typically involves breaking encryption or decoding ciphers?",opts:["Pwn","Web","Forensics","Crypto"],answer:3,exp:"The Crypto category covers breaking weak or incorrectly implemented encryption, decoding classical ciphers, and exploiting flaws in cryptographic systems."},
-      {q:"After failing to solve a CTF challenge, what's the most valuable thing to do?",opts:["Give up on that category","Never participate in CTFs again","Read the writeups — understanding solutions you couldn't reach builds skills fastest","Only practice easier challenges"],answer:2,exp:"Post-CTF writeups are where much of the learning happens. Seeing how others solved challenges you struggled with rapidly expands your knowledge and approach."}
+      {q:"What is the goal in a CTF competition?",opts:["Successfully compromising a real company's production systems","Finding hidden flag strings by solving security challenges","Building the most secure and hardened system in the time limit","Writing the highest number of lines of working exploit code"],answer:1,exp:"CTF competitions challenge participants to find hidden flags by exploiting vulnerabilities, solving puzzles, or breaking cryptography."},
+      {q:"Which CTF category involves breaking encryption or decoding ciphers?",opts:["Pwn — exploiting binary vulnerabilities to gain code execution","Web — finding vulnerabilities in web application source code","Forensics — analyzing disk images and memory dumps","Crypto — breaking weak or incorrectly implemented encryption"],answer:3,exp:"The Crypto category covers breaking weak encryption, decoding classical ciphers, and exploiting flawed cryptographic implementations."},
+      {q:"After failing to solve a CTF challenge, what's the most valuable next step?",opts:["Permanently giving up on that specific security category entirely","Refusing to participate in CTFs until your skills are much stronger","Reading writeups — understanding others' solutions builds skills fastest","Only practicing easier challenges until your confidence improves"],answer:2,exp:"Post-CTF writeups are where much of the learning happens. Seeing how others solved challenges rapidly expands skills."}
     ]},
     {id:'l10-3',title:'Certifications',content:`
 <div class="lesson-h1">Cybersecurity Certifications</div>
@@ -1504,7 +1504,7 @@ function openLesson(lessonId) {
 //  QUIZ
 // ═══════════════════════════════════════════════════════════
 function buildQuizHTML(lesson) {
-  const shuffled = shuffleQuizOptions(lesson.quiz);
+  const shuffled = balanceQuizLengths(shuffleQuizOptions(lesson.quiz));
   let html = `<div id="quizSection"><div class="quiz-header">// KNOWLEDGE CHECK</div>`;
   shuffled.forEach((q, qi) => {
     html += `<div class="quiz-q" id="q-${qi}">
@@ -1799,6 +1799,30 @@ function shuffleQuizOptions(quiz) {
   });
 }
 
+// Pad short wrong answers to similar length as correct — kills length-based guessing
+function balanceQuizLengths(questions) {
+  const fillers = [
+    ', depending on the network configuration',
+    ', in most standard implementations',
+    ', across typical enterprise environments',
+    ', under normal operating conditions',
+    ', based on how the protocol is designed',
+    ', in practice across modern systems',
+    ', regardless of the operating system used',
+    ', in both wired and wireless contexts',
+  ];
+  return questions.map(q => {
+    const correctLen = q.opts[q.answer].length;
+    const opts = q.opts.map((opt, i) => {
+      if (i !== q.answer && opt.length < correctLen * 0.72) {
+        return opt + fillers[Math.floor(Math.random() * fillers.length)];
+      }
+      return opt;
+    });
+    return { ...q, opts };
+  });
+}
+
 // ═══════════════════════════════════════════════════════════
 //  AI CHAT — Pollinations (free, no key)
 // ═══════════════════════════════════════════════════════════
@@ -1812,13 +1836,7 @@ function toggleChat() {
   chatOpen = !chatOpen;
   document.getElementById('chatPanel').classList.toggle('open', chatOpen);
   if (chatOpen && chatHistory.length === 0) {
-    const lesson = state.currentLesson
-      ? flatLessons().find(x => x.lesson.id === state.currentLesson)
-      : null;
-    const intro = lesson
-      ? `Currently on: <strong>${lesson.mod.title} › ${lesson.lesson.title}</strong>. Ask me anything about this lesson or any other cybersecurity topic.`
-      : `Ask me anything about cybersecurity.`;
-    appendChatMsg('ai', intro);
+    appendChatMsg('ai', `Ask me anything about cybersecurity — concepts, attacks, defenses, tools, or anything from the lessons.`);
   }
   if (chatOpen) {
     setTimeout(() => document.getElementById('chatInput').focus(), 100);
@@ -1856,16 +1874,7 @@ async function sendChat() {
   document.getElementById('chatStatus').className = 'thinking';
 
   appendChatMsg('user', text);
-
-  // Add lesson context to first message
-  const lesson = state.currentLesson
-    ? flatLessons().find(x => x.lesson.id === state.currentLesson)
-    : null;
-  const contextNote = lesson
-    ? `[User is currently studying: ${lesson.mod.title} › ${lesson.lesson.title}] `
-    : '';
-
-  chatHistory.push({role:'user', content: contextNote + text});
+  chatHistory.push({role:'user', content: text});
 
   // Thinking indicator
   const thinkEl = document.createElement('div');
