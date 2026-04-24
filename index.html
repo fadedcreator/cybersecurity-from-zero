@@ -501,6 +501,61 @@ nmap -sV <span class="string">192.168.1.1</span>
       {q:"What does a port number identify?",opts:["The speed and bandwidth of a network connection","A specific service or process running on a computer","The encryption algorithm being used for the traffic","The physical geographic location of a server"],answer:1,exp:"A port identifies which specific service or process should receive incoming traffic on a computer."},
       {q:"What is port scanning used for?",opts:["Speeding up packet delivery across the network","Encrypting traffic between two communicating hosts","Discovering which services are running on a target","Compressing data to reduce bandwidth consumption"],answer:2,exp:"Port scanning probes a target to find open ports, revealing which services are running and potential attack surfaces."},
       {q:"Why is a database port exposed to the internet dangerous?",opts:["It significantly reduces database query performance","Attackers can directly target the database bypassing your app","It causes excessive bandwidth usage on the network","It disables all encryption on database connections"],answer:1,exp:"A database exposed to the internet can be directly targeted — brute-forced, exploited, or queried — bypassing all application-level security."}
+    ]},
+    {id:'l1-4',title:'The OSI Model',content:`
+<div class="lesson-h1">The OSI Model</div>
+<div class="lesson-lead">The OSI model describes network communication in 7 layers. Every attack targets a specific layer — knowing which one tells you what defense applies.</div>
+<div class="lesson-h2">The 7 Layers</div>
+<div class="code-block">
+7. <span class="keyword">Application</span>   <span class="comment">// HTTP, DNS, SMTP — user-facing protocols</span>
+6. <span class="keyword">Presentation</span>  <span class="comment">// Encryption, encoding (TLS sits here)</span>
+5. <span class="keyword">Session</span>       <span class="comment">// Managing connections between applications</span>
+4. <span class="keyword">Transport</span>     <span class="comment">// TCP/UDP — ports, reliability, flow control</span>
+3. <span class="keyword">Network</span>       <span class="comment">// IP addresses, routing between networks</span>
+2. <span class="keyword">Data Link</span>     <span class="comment">// MAC addresses, switches, ARP</span>
+1. <span class="keyword">Physical</span>      <span class="comment">// Cables, WiFi radio signals, hardware</span>
+</div>
+<div class="lesson-h2">Attacks Mapped to Layers</div>
+<ul class="lesson-list">
+  <li><span class="hl">Layer 7:</span> SQLi, XSS, CSRF — stopped by WAF, input validation</li>
+  <li><span class="hl">Layer 4:</span> SYN flood DDoS — stopped by stateful firewalls, rate limiting</li>
+  <li><span class="hl">Layer 3:</span> IP spoofing — stopped by ingress/egress filtering</li>
+  <li><span class="hl">Layer 2:</span> ARP spoofing (MITM) — stopped by dynamic ARP inspection</li>
+  <li><span class="hl">Layer 1:</span> Cable tapping, rogue access points — physical security controls</li>
+</ul>
+<div class="info-box tip"><div class="info-box-label">// KEY INSIGHT</div>A DDoS floods layers 3/4. A web app attack hits layer 7. A MITM on WiFi is layer 2. The layer determines the attack mechanism and the correct defensive control.</div>`,
+    quiz:[
+      {q:"Which OSI layer do SQL injection and XSS attacks target?",opts:["Layer 1 — Physical","Layer 3 — Network","Layer 4 — Transport","Layer 7 — Application"],answer:3,exp:"SQL injection and XSS are web application attacks — they operate at Layer 7 (Application) where HTTP traffic and user input are processed."},
+      {q:"ARP spoofing (used in MITM attacks) operates at which layer?",opts:["Layer 7 — Application","Layer 4 — Transport","Layer 2 — Data Link","Layer 3 — Network"],answer:2,exp:"ARP operates at Layer 2 (Data Link) using MAC addresses. ARP spoofing poisons layer 2 address resolution to redirect traffic through the attacker."},
+      {q:"Why is knowing the OSI layer of an attack useful for defenders?",opts:["It reveals the attacker's identity","It determines the legal severity of the offense","It tells you which specific defensive control to apply","It shows how long the attack took"],answer:2,exp:"Each layer has specific defensive controls. Knowing the layer lets you apply the right defense — WAF for layer 7, stateful firewall for layer 4, ARP inspection for layer 2."}
+    ]},
+    {id:'l1-5',title:'Routers, NAT & How Traffic Flows',content:`
+<div class="lesson-h1">Routers, NAT & How Traffic Flows</div>
+<div class="lesson-lead">Your traffic hits multiple devices before reaching its destination. Understanding routing and NAT explains why home networks behave the way they do — and how attackers target this infrastructure.</div>
+<div class="lesson-h2">How Routing Works</div>
+<p>A <span class="hl">router</span> forwards packets between networks based on destination IP. Every packet hops through multiple routers on its way — you can visualize this with <span class="hl-amber">traceroute</span>:</p>
+<div class="code-block">
+traceroute google.com
+ 1  192.168.1.1      <span class="comment"># Your home router</span>
+ 2  10.x.x.x         <span class="comment"># ISP first hop</span>
+ 3  172.x.x.x        <span class="comment"># ISP backbone</span>
+...
+12  142.250.185.46   <span class="comment"># Google — destination reached</span>
+</div>
+<div class="lesson-h2">NAT — Why You Have a Private IP</div>
+<p>Your devices use private IPs (192.168.x.x) that don't work on the public internet. <span class="hl">NAT</span> on your router translates these to its single public IP when traffic leaves — and reverses it for responses coming back in.</p>
+<div class="info-box tip"><div class="info-box-label">// SIDE EFFECT</div>NAT acts as an implicit barrier — external attackers can't directly reach internal devices without the router explicitly forwarding that port. This is why <strong>open port forwarding is a security risk</strong>.</div>
+<div class="lesson-h2">Why Routers Are High-Value Targets</div>
+<ul class="lesson-list">
+  <li><strong>Default credentials:</strong> admin/admin never changed — trivial to compromise</li>
+  <li><strong>DNS hijacking:</strong> Attacker modifies router DNS to redirect all traffic</li>
+  <li><strong>BGP hijacking:</strong> ISP-level routing manipulation rerouting internet traffic</li>
+  <li><strong>Firmware vulns:</strong> Unpatched routers running outdated firmware with known CVEs</li>
+</ul>`,
+    quiz:[
+      {q:"What does NAT do on your home router?",opts:["Encrypts all outbound traffic automatically","Translates private internal IPs to the router's public IP for internet routing","Scans traffic for malware before forwarding","Assigns IPs to devices on your network"],answer:1,exp:"NAT translates private IPs (192.168.x.x) to the router's public IP for internet routing — and reverses this mapping for incoming response traffic."},
+      {q:"What security risk does port forwarding create?",opts:["It slows internet speed","It disables the firewall entirely","It exposes a specific internal device directly to the internet","It allows changing DNS settings remotely"],answer:2,exp:"Port forwarding bypasses NAT's natural barrier by explicitly routing external connections to an internal device — exposing it directly to attackers scanning the internet."},
+      {q:"An attacker compromises your router and changes its DNS settings. What happens?",opts:["Your WiFi password is revealed","All DNS queries return attacker-controlled IPs, redirecting you to fake sites","All HTTPS traffic is decrypted","Every device's MAC address is exposed"],answer:1,exp:"Compromised DNS settings redirect all domain lookups — legitimate sites resolve to attacker servers, enabling phishing and credential theft for all devices on your network."}
     ]}
   ]
 },
@@ -578,6 +633,59 @@ nmap -sV <span class="string">192.168.1.1</span>
       {q:"In the Kill Chain, what is 'Reconnaissance'?",opts:["Installing malware on the target system for persistence","Researching and gathering information about the target","Encrypting the target's files to demand a ransom payment","Sending a phishing email to deliver the malicious payload"],answer:1,exp:"Reconnaissance is the first stage — researching the target to find vulnerabilities and identify key people."},
       {q:"Why is stopping at 'Delivery' better than stopping at 'Actions'?",opts:["Delivery is technically the easiest stage to intercept","The attacker hasn't gained access yet so damage is minimal","It saves significantly more server processing resources","Attackers tend to give up more easily at the delivery stage"],answer:1,exp:"The earlier you stop an attack, the less damage occurs. At Delivery, no exploitation has happened yet."},
       {q:"What is Command & Control (C2)?",opts:["The moment when the initial phishing email is sent out","A government agency that investigates cybercrime globally","Infrastructure attackers use to remotely control compromised systems","The process of encrypting and exfiltrating the stolen data"],answer:2,exp:"C2 is the infrastructure attackers use to issue commands to malware on compromised systems."}
+    ]},
+    {id:'l2-4',title:'Risk Management & Threat Modeling',content:`
+<div class="lesson-h1">Risk Management & Threat Modeling</div>
+<div class="lesson-lead">Security isn't about eliminating all risk — it's about managing it intelligently. Risk management and threat modeling are how organizations decide where to spend their security budget.</div>
+<div class="lesson-h2">What is Risk?</div>
+<p><span class="hl">Risk</span> = Likelihood × Impact. A vulnerability that's hard to exploit but would destroy your business is high risk. A vulnerability that's easy to exploit but causes no real damage is low risk. Both factors matter.</p>
+<div class="code-block">
+Risk = <span class="keyword">Threat</span> × <span class="keyword">Vulnerability</span> × <span class="keyword">Impact</span>
+
+Example:
+- Threat:        Ransomware groups target healthcare
+- Vulnerability: No offline backups, weak email filtering
+- Impact:        Patient data encrypted, operations halted
+= <span class="keyword">HIGH RISK</span> — prioritize immediately
+</div>
+<div class="lesson-h2">Threat Modeling — STRIDE</div>
+<p><span class="hl">STRIDE</span> is a framework for systematically identifying threats to a system:</p>
+<ul class="lesson-list">
+  <li><span class="hl">S</span>poofing — pretending to be someone else (solved by authentication)</li>
+  <li><span class="hl">T</span>ampering — modifying data (solved by integrity checks, signing)</li>
+  <li><span class="hl">R</span>epudiation — denying you did something (solved by logging/audit trails)</li>
+  <li><span class="hl">I</span>nformation Disclosure — data leaks (solved by encryption, access control)</li>
+  <li><span class="hl">D</span>enial of Service — making systems unavailable (solved by redundancy)</li>
+  <li><span class="hl">E</span>levation of Privilege — gaining unauthorized access (solved by least privilege)</li>
+</ul>
+<div class="info-box tip"><div class="info-box-label">// HOW TO USE IT</div>For any system you're designing or testing, go through STRIDE category by category. Ask: "How could an attacker spoof here? How could they tamper?" It surfaces vulnerabilities before they're built in.</div>`,
+    quiz:[
+      {q:"How is risk calculated in security?",opts:["Number of vulnerabilities divided by available patches","Likelihood multiplied by impact","Cost of security tools minus insurance premium","Number of incidents per year"],answer:1,exp:"Risk = Likelihood × Impact. Both factors matter — a hard-to-exploit but catastrophic vulnerability and an easy-to-exploit but harmless one can have the same risk score."},
+      {q:"In STRIDE, what does 'Elevation of Privilege' mean?",opts:["An admin account with too many permissions","Gaining more access than you're authorized to have","Monitoring privileged user accounts","Two-factor authentication for admin accounts"],answer:1,exp:"Elevation of Privilege in STRIDE means gaining unauthorized access beyond your permissions — what privilege escalation attacks achieve."},
+      {q:"What is the main purpose of threat modeling?",opts:["To estimate the cost of a security breach","To systematically identify potential threats before they're exploited","To rank security certifications by difficulty","To measure employee security awareness"],answer:1,exp:"Threat modeling systematically identifies what could go wrong in a system before it's built or exploited — enabling proactive defense rather than reactive patching."}
+    ]},
+    {id:'l2-5',title:'Security Frameworks & Compliance',content:`
+<div class="lesson-h1">Security Frameworks & Compliance</div>
+<div class="lesson-lead">Security frameworks give organizations a structured approach to managing security. Compliance requirements force them to actually implement it. Both shape how enterprise security works.</div>
+<div class="lesson-h2">Major Frameworks</div>
+<ul class="lesson-list">
+  <li><span class="hl">NIST CSF</span> — National Institute of Standards and Technology Cybersecurity Framework. Five functions: Identify, Protect, Detect, Respond, Recover. The most widely used in the US.</li>
+  <li><span class="hl">ISO 27001</span> — International standard for information security management systems. Certifiable — companies get audited and certified. Widely required in Europe.</li>
+  <li><span class="hl">CIS Controls</span> — 18 prioritized security controls. Highly practical — tells you exactly what to implement, in what order.</li>
+  <li><span class="hl">MITRE ATT&CK</span> — More of an adversary knowledge base than a framework, but used for detection engineering and gap analysis.</li>
+</ul>
+<div class="lesson-h2">Compliance Requirements</div>
+<div class="two-col">
+  <div class="col-card"><div class="col-card-title">// GDPR</div>EU data protection law. Requires protecting personal data, reporting breaches within 72 hours, right to deletion. Violations: up to 4% of global revenue.</div>
+  <div class="col-card"><div class="col-card-title">// PCI DSS</div>Payment Card Industry standard. Required for any company handling credit cards. Mandates encryption, network segmentation, regular testing.</div>
+  <div class="col-card"><div class="col-card-title">// SOC 2</div>US audit standard for service companies. Verifies security, availability, confidentiality controls. Required by many enterprise clients.</div>
+  <div class="col-card"><div class="col-card-title">// HIPAA</div>US healthcare data protection. Strict rules on protecting patient records. Applies to any system handling medical data.</div>
+</div>
+<div class="info-box"><div class="info-box-label">// FRAMEWORK VS COMPLIANCE</div>Frameworks are voluntary best practices. Compliance is legally or contractually required. Being compliant doesn't mean being secure — compliance is a floor, not a ceiling.</div>`,
+    quiz:[
+      {q:"What are the five functions of the NIST Cybersecurity Framework?",opts:["Plan, Build, Test, Deploy, Monitor","Prevent, Detect, Respond, Recover, Report","Identify, Protect, Detect, Respond, Recover","Assess, Implement, Audit, Report, Improve"],answer:2,exp:"NIST CSF's five core functions are: Identify, Protect, Detect, Respond, Recover — covering the full lifecycle of security risk management."},
+      {q:"Under GDPR, how quickly must organizations report a data breach?",opts:["Within 24 hours of discovery","Within 72 hours of discovery","Within 7 days of discovery","Within 30 days of discovery"],answer:1,exp:"GDPR requires breach notification to supervisory authorities within 72 hours of becoming aware of the breach — a strict timeline that requires having an incident response plan ready."},
+      {q:"What is the key difference between a security framework and compliance?",opts:["Frameworks are more expensive to implement","Compliance is legally required while frameworks are voluntary best practices","Frameworks only apply to large enterprises","Compliance is optional in most countries"],answer:1,exp:"Frameworks are voluntary best practices organizations adopt to improve security. Compliance is legally or contractually mandated. Compliance is a minimum floor — not a guarantee of real security."}
     ]}
   ]
 },
@@ -714,6 +822,70 @@ cursor.execute(query, (username,))
       {q:"In a MITM attack, what does the attacker do?",opts:["Deletes server files","Sits between two parties intercepting their traffic","Sends spam emails","Installs ransomware"],answer:1,exp:"In MITM, the attacker positions themselves between communicating parties — both sides think they're talking to each other, but all traffic passes through the attacker."},
       {q:"What is an 'Evil Twin' WiFi attack?",opts:["Hacking two networks","Creating a fake access point mimicking a legitimate one","Cloning router settings","Duplicating a website"],answer:1,exp:"An Evil Twin is a rogue WiFi access point that looks identical to a legitimate one. When you connect, your traffic flows through the attacker."},
       {q:"Why does HTTPS protect against most MITM attacks?",opts:["It blocks all WiFi connections","Connection is faster so attackers can't keep up","Traffic is encrypted and server identity is verified via certificates","It hides your IP"],answer:2,exp:"HTTPS encrypts traffic (intercepted data is unreadable) and verifies server identity via certificates (preventing fake servers)."}
+    ]},
+    {id:'l3-5',title:'DDoS Attacks',content:`
+<div class="lesson-h1">DDoS — Distributed Denial of Service</div>
+<div class="lesson-lead">DDoS attacks flood a target with so much traffic that it can't serve legitimate users. They're simple in concept, devastating in practice, and the tools to launch them are widely available.</div>
+<div class="lesson-h2">Types of DDoS</div>
+<ul class="lesson-list">
+  <li><span class="hl">Volumetric (Layer 3/4):</span> Flood the target with raw bandwidth. Measured in Gbps. Amplification attacks can generate 1000x traffic from small requests.</li>
+  <li><span class="hl">Protocol attacks (Layer 4):</span> Exhaust server connection state. SYN floods leave thousands of half-open TCP connections.</li>
+  <li><span class="hl">Application layer (Layer 7):</span> Send legitimate-looking HTTP requests that are expensive to process. Hard to distinguish from real traffic.</li>
+</ul>
+<div class="lesson-h2">Amplification Attacks</div>
+<p>In an <span class="hl">amplification attack</span>, the attacker spoofs the victim's IP and sends small requests to public servers (DNS, NTP, memcached). These servers send large responses to the victim — amplifying the attacker's traffic by 10–50,000x.</p>
+<div class="code-block">
+Attacker sends: 1 byte UDP packet (spoofed src = victim IP)
+DNS server responds: 3,000 byte response → to victim
+<span class="comment">Amplification factor: 3000x</span>
+<span class="comment">1 Gbps sent → ~3 Tbps hitting the victim</span>
+</div>
+<div class="lesson-h2">Botnets</div>
+<p>Large DDoS attacks are launched from <span class="hl">botnets</span> — thousands or millions of compromised devices (PCs, IoT devices, cameras) controlled by the attacker. The Mirai botnet (2016) used IoT cameras to generate 1.2 Tbps attacks — still one of the largest ever.</p>
+<div class="lesson-h2">Defense</div>
+<ul class="lesson-list">
+  <li>DDoS scrubbing services (Cloudflare, Akamai) — absorb and filter traffic upstream</li>
+  <li>Anycast routing — distribute attack traffic across global network</li>
+  <li>Rate limiting — limit requests per IP per second</li>
+  <li>Over-provisioning bandwidth — maintain capacity headroom</li>
+</ul>`,
+    quiz:[
+      {q:"What is a volumetric DDoS attack?",opts:["Exploiting a vulnerability in web application code","Flooding the target with massive raw bandwidth to exhaust capacity","Sending requests that are expensive for the server to process","Exploiting TCP connection state to exhaust server memory"],answer:1,exp:"Volumetric DDoS floods the target with raw bandwidth — measured in Gbps or Tbps — overwhelming network capacity so legitimate traffic can't get through."},
+      {q:"How does a DNS amplification attack work?",opts:["Attacker sends fake DNS responses to redirect users","Attacker poisons the victim's DNS cache with false records","Attacker spoofs victim's IP and sends small DNS requests, causing large responses to flood the victim","Attacker registers many domains to overwhelm DNS servers"],answer:2,exp:"In amplification, the attacker spoofs the victim's IP on small requests to DNS servers. The servers send large responses to the victim — amplifying attack volume by hundreds or thousands of times."},
+      {q:"What is a botnet in the context of DDoS?",opts:["A network security monitoring tool","A type of application layer firewall","Thousands of compromised devices used to launch coordinated attacks","A cloud service for testing network capacity"],answer:2,exp:"A botnet is a network of compromised devices controlled by an attacker. In DDoS, thousands of bots simultaneously flood the target — distributing the attack and making it hard to block by source IP."}
+    ]},
+    {id:'l3-6',title:'Password Attacks',content:`
+<div class="lesson-h1">Password Attacks</div>
+<div class="lesson-lead">Weak passwords are the #1 cause of account compromise. Understanding how attackers crack and guess passwords explains exactly why password hygiene matters.</div>
+<div class="lesson-h2">Types of Password Attacks</div>
+<ul class="lesson-list">
+  <li><span class="hl">Brute force:</span> Try every possible combination. Slow but guaranteed to work eventually. 8-char passwords fall in hours with GPU cracking.</li>
+  <li><span class="hl">Dictionary attack:</span> Try words from a wordlist (rockyou.txt has 14 million real leaked passwords). Much faster than pure brute force.</li>
+  <li><span class="hl">Credential stuffing:</span> Take username/password pairs from breached databases and try them on other sites. Works because people reuse passwords.</li>
+  <li><span class="hl">Password spraying:</span> Try one common password (Password1!) against many accounts. Avoids lockout by not hammering any single account.</li>
+  <li><span class="hl">Rainbow table attack:</span> Precomputed hash-to-password mappings. Defeated by salting.</li>
+</ul>
+<div class="lesson-h2">GPU Cracking Power</div>
+<div class="code-block">
+<span class="comment"># Hashcat on modern GPU (RTX 4090):</span>
+MD5 hashes:     ~164 billion guesses/second
+bcrypt (cost 12):  ~6,000 guesses/second
+<span class="comment"># 8-char MD5 password → cracked in minutes</span>
+<span class="comment"># 8-char bcrypt → takes years</span>
+<span class="comment"># This is why bcrypt/Argon2 exists</span>
+</div>
+<div class="lesson-h2">Defenses</div>
+<ul class="lesson-list">
+  <li>Long, unique passwords per site — a password manager makes this trivial</li>
+  <li>MFA — even a cracked password is useless without the second factor</li>
+  <li>Account lockout after N failed attempts</li>
+  <li>Store with bcrypt/Argon2 — not MD5/SHA1</li>
+  <li>Monitor for credential stuffing via anomalous login patterns</li>
+</ul>`,
+    quiz:[
+      {q:"What is credential stuffing?",opts:["Brute forcing a single account with many password guesses","Using leaked username/password pairs from one breach to log in to other sites","Adding fake credentials to a database to confuse attackers","Injecting credentials into a login form via SQL injection"],answer:1,exp:"Credential stuffing uses breach data from one site to attack others — it works because users reuse passwords. A breach at Site A gives attackers working credentials for Site B, C, and D."},
+      {q:"Why does password spraying avoid account lockouts?",opts:["It uses proxy servers to hide the attack","It only targets accounts without lockout policies","It tries one password across many accounts rather than many passwords against one account","It uses valid session tokens instead of passwords"],answer:2,exp:"Password spraying tries one common password across many accounts — staying below lockout thresholds on each account while still testing many targets systematically."},
+      {q:"Why is bcrypt far better for password storage than MD5?",opts:["bcrypt produces longer hash values","bcrypt is internationally standardized and MD5 is not","bcrypt is intentionally slow — limiting guesses to thousands per second vs billions for MD5","bcrypt automatically salts and MD5 does not"],answer:2,exp:"bcrypt's intentional slowness limits GPU-accelerated cracking to thousands of guesses per second vs billions for MD5 — making brute force attacks take years instead of minutes."}
     ]}
   ]
 },
@@ -802,6 +974,63 @@ hash = bcrypt(<span class="string">"mypassword"</span> + salt)
       {q:"What three things does TLS provide?",opts:["Speed, reliability, and traffic compression for faster loading","Confidentiality, integrity, and authentication for secure connections","Encryption, routing, and DNS resolution for web traffic","Privacy, anonymity, and significantly faster connection speeds"],answer:1,exp:"TLS: Confidentiality (encrypted), Integrity (tamper-proof), Authentication (real server verified via certificates)."},
       {q:"What is a Certificate Authority (CA)?",opts:["A government agency that licenses and regulates encryption use","A trusted third party that issues SSL certificates verifying domains","A specific type of encryption algorithm used within HTTPS","A database that tracks and blocks known malicious websites"],answer:1,exp:"CAs verify domain ownership and issue signed SSL certificates. Your browser trusts a pre-loaded list of CAs."},
       {q:"Why doesn't TLS directly transmit the session key?",opts:["The session key would simply be too large to transmit","Interceptors could capture it — DH lets both sides derive it independently","The session key doesn't actually exist until after connection","Symmetric keys fundamentally cannot be transmitted over any network"],answer:1,exp:"Directly transmitting the key would let anyone intercepting the handshake read all subsequent traffic. Diffie-Hellman solves this."}
+    ]},
+    {id:'l4-4',title:'Digital Signatures & PKI',content:`
+<div class="lesson-h1">Digital Signatures & PKI</div>
+<div class="lesson-lead">Digital signatures prove that a message or file came from a specific person and hasn't been tampered with. PKI is the infrastructure that makes this work at internet scale.</div>
+<div class="lesson-h2">How Digital Signatures Work</div>
+<p>Digital signatures use asymmetric cryptography in reverse: you <span class="hl">sign with your private key</span>, anyone <span class="hl">verifies with your public key</span>. If the signature verifies, the message came from the private key holder and hasn't been modified.</p>
+<div class="code-block">
+<span class="comment">// Signing a document</span>
+hash = SHA256(document)           <span class="comment">// hash the content</span>
+signature = RSA_encrypt(hash, private_key)  <span class="comment">// sign the hash</span>
+
+<span class="comment">// Verifying</span>
+hash_from_doc = SHA256(document)
+hash_from_sig = RSA_decrypt(signature, public_key)
+valid = (hash_from_doc == hash_from_sig)  <span class="comment">// tampered = mismatch</span>
+</div>
+<div class="lesson-h2">Public Key Infrastructure (PKI)</div>
+<p><span class="hl">PKI</span> is the system for managing digital certificates — binding public keys to identities. It answers: "How do I know this public key actually belongs to google.com and not an attacker?"</p>
+<ul class="lesson-list">
+  <li><strong>Certificate Authority (CA):</strong> Trusted entity that signs certificates after verifying identity</li>
+  <li><strong>Digital certificate:</strong> Contains: public key + identity + CA signature + expiry</li>
+  <li><strong>Chain of trust:</strong> Your browser trusts root CAs → root signs intermediate CA → intermediate signs website cert</li>
+  <li><strong>Certificate Revocation:</strong> CRL and OCSP let browsers check if a cert has been revoked before expiry</li>
+</ul>
+<div class="info-box danger"><div class="info-box-label">// ATTACK: CERTIFICATE SPOOFING</div>If an attacker can get a CA to issue a fraudulent certificate for your domain, they can impersonate you with a valid cert. This has happened. Certificate Transparency logs (public audit of all issued certs) help detect it.</div>`,
+    quiz:[
+      {q:"When you sign a document with your private key, what does this prove?",opts:["The document is encrypted and confidential","Only you could have created the signature, and the document hasn't been tampered with","The document was sent over HTTPS","The document was verified by a Certificate Authority"],answer:1,exp:"A digital signature proves authenticity (only the private key holder could have signed it) and integrity (any modification invalidates the signature)."},
+      {q:"What does a digital certificate contain?",opts:["Your encrypted private key","A public key bound to an identity, signed by a Certificate Authority","The full encrypted content of your messages","Your browser's list of trusted domains"],answer:1,exp:"A digital certificate binds a public key to an identity (like a domain name) with a CA's signature — proving the public key genuinely belongs to who it claims to."},
+      {q:"What is Certificate Transparency and why does it matter?",opts:["A protocol for encrypting certificate data","A public audit log of all issued certificates that helps detect fraudulent certificates","A method for automatically renewing expired certificates","A way to make certificates load faster in browsers"],answer:1,exp:"Certificate Transparency is a public append-only log of all SSL certificates issued by CAs. It lets security researchers detect unauthorized certificates issued for domains they don't own."}
+    ]},
+    {id:'l4-5',title:'VPNs & Tunneling',content:`
+<div class="lesson-h1">VPNs & Tunneling</div>
+<div class="lesson-lead">VPNs create encrypted tunnels through untrusted networks. Understanding how they work — and their limitations — matters for both personal security and enterprise architecture.</div>
+<div class="lesson-h2">How a VPN Works</div>
+<p>A <span class="hl">VPN</span> (Virtual Private Network) encrypts all your traffic and routes it through a server you trust before it hits the internet. From the outside, all traffic appears to come from the VPN server's IP.</p>
+<div class="code-block">
+Without VPN:  You → ISP → Internet → Destination
+With VPN:     You → [encrypted tunnel] → VPN Server → Internet → Destination
+
+<span class="comment">Your ISP sees: encrypted traffic to VPN server only</span>
+<span class="comment">Destination sees: VPN server's IP, not yours</span>
+</div>
+<div class="lesson-h2">VPN Protocols</div>
+<ul class="lesson-list">
+  <li><span class="hl">WireGuard:</span> Modern, fast, minimal codebase (~4000 lines). The current gold standard.</li>
+  <li><span class="hl">OpenVPN:</span> Battle-tested, open source. Slower than WireGuard but very widely used.</li>
+  <li><span class="hl">IPsec/IKEv2:</span> Native to most OSes. Fast and stable. Common in enterprise.</li>
+  <li><span class="hl">SSL VPN:</span> Runs over HTTPS port 443 — harder to block on corporate networks.</li>
+</ul>
+<div class="lesson-h2">VPN Limitations — What VPNs Don't Do</div>
+<div class="info-box danger"><div class="info-box-label">// COMMON MISCONCEPTION</div>A VPN doesn't make you anonymous, doesn't protect against malware, and doesn't hide your activity from the VPN provider itself. It shifts trust from your ISP to your VPN provider. Choose carefully.</div>
+<div class="lesson-h2">Split Tunneling</div>
+<p><span class="hl">Split tunneling</span> routes only some traffic through the VPN. Enterprise use: employees can access internal systems via VPN while normal web browsing goes direct — avoiding bottlenecks. Security risk: malware on the device can use the direct path to bypass VPN monitoring.</p>`,
+    quiz:[
+      {q:"What does a VPN primarily protect against?",opts:["Malware and viruses on your device","Phishing attacks in your email","Traffic interception by your ISP or on untrusted networks like public WiFi","Attacks on websites you visit"],answer:2,exp:"A VPN encrypts your traffic so your ISP and anyone on your network (like public WiFi attackers) can't read it. It doesn't protect against malware or server-side attacks."},
+      {q:"What is split tunneling in a VPN?",opts:["Running two VPN connections simultaneously","Routing only some traffic through the VPN while the rest goes direct","Splitting encryption keys between client and server","A technique for bypassing VPN detection"],answer:1,exp:"Split tunneling routes specific traffic through the VPN while other traffic uses the direct internet connection — balancing security with performance but introducing risk if malware uses the direct path."},
+      {q:"Why doesn't a VPN provide full anonymity?",opts:["VPN encryption is too weak","VPNs only work on desktop computers","The VPN provider can see your traffic — you're shifting trust to them, not eliminating it","VPNs don't hide your IP address at all"],answer:2,exp:"A VPN shifts who can see your traffic from your ISP to the VPN provider. If the provider logs traffic or is compromised, you're exposed. Anonymity requires additional layers beyond just a VPN."}
     ]}
   ]
 },
@@ -858,6 +1087,63 @@ ALLOW  tcp  10.0.0.0/8 → server:22  <span class="comment"># SSH — internal o
       {q:"Password + authenticator app. What is this called?",opts:["SSO","MFA","Zero Trust auth","Biometric auth"],answer:1,exp:"Using two factors — something you know (password) and something you have (authenticator app) — is Multi-Factor Authentication (MFA)."},
       {q:"Why is SMS 2FA weaker than an authenticator app?",opts:["Too slow","Codes are too short","Bypassed via SIM swapping","Phones can't receive SMS securely"],answer:2,exp:"SIM swapping lets an attacker transfer your number to their SIM, intercepting your SMS codes. Authenticator apps generate codes locally."},
       {q:"Core principle of Zero Trust?",opts:["Trust everyone inside the corporate network","Never trust, always verify every request regardless of location","Block all external connections","Only use hardware keys"],answer:1,exp:"Zero Trust assumes no user or device is inherently trusted. Every access request must be verified — inside or outside the network."}
+    ]},
+    {id:'l5-3',title:'Incident Response',content:`
+<div class="lesson-h1">Incident Response</div>
+<div class="lesson-lead">When a breach happens — and it will — how an organization responds determines whether it's a contained incident or a catastrophic disaster. Incident response is the difference.</div>
+<div class="lesson-h2">The IR Lifecycle (NIST)</div>
+<div class="code-block">
+1. <span class="keyword">PREPARATION</span>    <span class="comment">// IR plan, team, tools, playbooks ready before breach</span>
+2. <span class="keyword">DETECTION</span>      <span class="comment">// Identify that an incident has occurred</span>
+3. <span class="keyword">CONTAINMENT</span>    <span class="comment">// Stop the bleeding — short-term then long-term</span>
+4. <span class="keyword">ERADICATION</span>    <span class="comment">// Remove attacker, malware, backdoors from environment</span>
+5. <span class="keyword">RECOVERY</span>       <span class="comment">// Restore systems, verify clean, return to operations</span>
+6. <span class="keyword">LESSONS LEARNED</span> <span class="comment">// Post-incident review — what failed, what to fix</span>
+</div>
+<div class="lesson-h2">Containment Strategy</div>
+<p>The hardest decision in IR: isolate vs. observe. Isolating a compromised system stops damage but alerts the attacker. Observing lets you understand their full scope but risks more damage. The right call depends on the situation.</p>
+<div class="two-col">
+  <div class="col-card"><div class="col-card-title">// ISOLATE IMMEDIATELY WHEN:</div>Ransomware is actively spreading. PII is being exfiltrated. Critical systems are at risk. You have enough evidence.</div>
+  <div class="col-card"><div class="col-card-title">// OBSERVE FIRST WHEN:</div>Early stage intrusion detected. Attribution matters. You want to understand full scope. Law enforcement involvement.</div>
+</div>
+<div class="lesson-h2">Chain of Custody</div>
+<p>During IR, <span class="hl">chain of custody</span> matters — especially if prosecution is possible. Every piece of evidence (disk images, logs, memory dumps) must be documented: who collected it, when, how, and where it's been. Broken chain = inadmissible in court.</p>
+<div class="info-box tip"><div class="info-box-label">// FIRST RULE OF IR</div>Never work on original evidence. Always image first, work from copies. Forensic tools like dd, FTK Imager, or Volatility preserve the original state.</div>`,
+    quiz:[
+      {q:"What happens during the 'Eradication' phase of incident response?",opts:["The initial detection of the security incident","Isolating compromised systems to stop damage spreading","Removing the attacker, malware, and all backdoors from the environment","Restoring systems and returning to normal operations"],answer:2,exp:"Eradication removes the threat from the environment — the attacker's access, malware, backdoors, and persistence mechanisms must all be eliminated before recovery begins."},
+      {q:"Why might an IR team observe an attacker instead of immediately isolating?",opts:["Isolation is technically impossible in modern networks","Observing is always safer than containment","To understand the full scope, attribution, or evidence for law enforcement — while managing risk","Attackers always leave when systems are isolated"],answer:2,exp:"Early containment alerts the attacker and may destroy evidence. Careful observation can reveal full scope, other compromised systems, and the attacker's techniques — valuable for both defense and prosecution."},
+      {q:"What is 'chain of custody' in incident response?",opts:["The order in which systems are patched after an incident","Documentation tracking who handled each piece of evidence, when, and how — required for legal proceedings","The hierarchy of personnel involved in incident response","The sequence of systems compromised during an attack"],answer:1,exp:"Chain of custody documents every person who handled evidence — ensuring it hasn't been tampered with. Broken chain of custody can make evidence inadmissible in criminal proceedings against attackers."}
+    ]},
+    {id:'l5-4',title:'SIEM & Security Monitoring',content:`
+<div class="lesson-h1">SIEM & Security Monitoring</div>
+<div class="lesson-lead">You can't defend what you can't see. SIEM and security monitoring are how organizations detect attacks in real time — and how analysts piece together what happened after the fact.</div>
+<div class="lesson-h2">What is SIEM?</div>
+<p><span class="hl">SIEM</span> (Security Information and Event Management) aggregates logs from across an organization — firewalls, servers, endpoints, applications — and correlates them to detect threats. One event is noise. The same event across 100 systems at 3am is an incident.</p>
+<div class="code-block">
+<span class="comment">// Without SIEM: 500 systems, 10M log lines/day</span>
+<span class="comment">// Analyst checks each manually → impossible</span>
+
+<span class="comment">// With SIEM: all logs aggregated + correlation rules</span>
+Rule: <span class="keyword">IF</span> failed_login > 50 in 60sec <span class="keyword">FROM</span> same_ip
+       <span class="keyword">THEN</span> alert(HIGH, "Possible brute force attack")
+
+Rule: <span class="keyword">IF</span> new_admin_account_created <span class="keyword">AND</span> NOT in_change_window
+       <span class="keyword">THEN</span> alert(CRITICAL, "Unauthorized privilege escalation")
+</div>
+<div class="lesson-h2">Key Log Sources</div>
+<ul class="lesson-list">
+  <li><span class="hl">Windows Event Logs:</span> Logon events (4624/4625), account changes, process creation</li>
+  <li><span class="hl">Firewall logs:</span> Allowed/denied connections, port scans, anomalous traffic</li>
+  <li><span class="hl">DNS logs:</span> Domain lookups — C2 beaconing shows up as regular lookups to unusual domains</li>
+  <li><span class="hl">Web server logs:</span> Error spikes, unusual paths, SQLi/XSS attempts in request strings</li>
+  <li><span class="hl">EDR telemetry:</span> Process executions, file writes, network connections per endpoint</li>
+</ul>
+<div class="lesson-h2">Popular SIEM Tools</div>
+<p><span class="hl-amber">Splunk</span> (industry standard, expensive), <span class="hl-amber">Microsoft Sentinel</span> (cloud-native, Azure), <span class="hl-amber">Elastic SIEM</span> (open source core), <span class="hl-amber">IBM QRadar</span> (enterprise). Splunk queries and Elastic KQL are worth learning.</p>`,
+    quiz:[
+      {q:"What does SIEM primarily do?",opts:["Blocks malware on individual endpoints","Aggregates logs from across an organization and correlates them to detect threats","Scans network traffic for vulnerabilities","Manages user access permissions centrally"],answer:1,exp:"SIEM aggregates logs from many sources and applies correlation rules to detect threats that would be invisible looking at any single log source in isolation."},
+      {q:"Why are DNS logs valuable for detecting attacker activity?",opts:["DNS logs show which users logged in","Malware C2 communication often shows up as regular DNS queries to unusual domains","DNS logs contain user passwords","DNS only logs failed connection attempts"],answer:1,exp:"Malware often uses DNS for C2 — regular lookups to unusual or algorithmically generated domains that blend in. DNS logs reveal beaconing patterns invisible in network traffic alone."},
+      {q:"A SIEM rule fires when 50+ failed logins occur from the same IP in 60 seconds. What attack does this detect?",opts:["SQL injection against the login form","A SYN flood targeting the authentication server","A brute force or credential stuffing attack","A man-in-the-middle attack on login traffic"],answer:2,exp:"50+ failed logins from the same IP in 60 seconds is a classic brute force or credential stuffing pattern — automated tools rapidly trying username/password combinations."}
     ]}
   ]
 },
@@ -949,6 +1235,68 @@ PORT   STATE SERVICE VERSION
       {q:"What is Burp Suite primarily used for?",opts:["Cracking WiFi WPA2 passwords by capturing handshakes","Performing network port scans to discover open services","Intercepting and testing web application HTTP traffic","Capturing and analyzing raw packets at the network level"],answer:2,exp:"Burp Suite is the standard tool for web application pentesting — proxying HTTP/HTTPS to intercept, modify, and replay requests."},
       {q:"What does Nmap do?",opts:["Cracks password hashes using GPU-accelerated computation","Discovers hosts, open ports, and running services on a network","Intercepts and decrypts WiFi traffic on local networks","Generates convincing phishing emails targeting specific users"],answer:1,exp:"Nmap scans for open ports, identifies running services and versions, and can fingerprint operating systems."},
       {q:"Why practice on TryHackMe rather than random websites?",opts:["TryHackMe has significantly better and more powerful hacking tools","It provides legal environments — hacking real systems requires authorization","TryHackMe has much faster network speeds than real targets","It teaches better programming skills alongside security concepts"],answer:1,exp:"Pentesting requires authorization. TryHackMe and HackTheBox provide legal, designed-for-learning environments."}
+    ]},
+    {id:'l6-4',title:'Web Application Testing',content:`
+<div class="lesson-h1">Web Application Testing</div>
+<div class="lesson-lead">Web apps are the largest attack surface for most organizations. A methodical approach to testing them — rather than random poking — finds real vulnerabilities consistently.</div>
+<div class="lesson-h2">The OWASP Top 10</div>
+<p>The <span class="hl">OWASP Top 10</span> is the most referenced list of critical web vulnerabilities. Updated regularly based on real-world breach data:</p>
+<ul class="lesson-list">
+  <li>A01: Broken Access Control (IDOR, privilege escalation)</li>
+  <li>A02: Cryptographic Failures (weak encryption, plain text transmission)</li>
+  <li>A03: Injection (SQL, command, LDAP injection)</li>
+  <li>A04: Insecure Design (logic flaws baked into architecture)</li>
+  <li>A05: Security Misconfiguration (default credentials, verbose errors)</li>
+  <li>A06: Vulnerable Components (outdated libraries with known CVEs)</li>
+  <li>A07: Authentication Failures (broken login, weak session management)</li>
+  <li>A08: SSRF (server-side request forgery)</li>
+  <li>A09: Logging Failures (can't detect or reconstruct attacks)</li>
+  <li>A10: CSRF, XSS, and other injection types</li>
+</ul>
+<div class="lesson-h2">Web Testing Methodology</div>
+<div class="code-block">
+1. <span class="keyword">Reconnaissance</span>   <span class="comment"># Spider site, find endpoints, identify tech stack</span>
+2. <span class="keyword">Authentication</span>   <span class="comment"># Test login, registration, password reset, MFA</span>
+3. <span class="keyword">Authorization</span>    <span class="comment"># IDOR — can you access other users' data?</span>
+4. <span class="keyword">Input validation</span> <span class="comment"># SQLi, XSS, command injection on all inputs</span>
+5. <span class="keyword">Session mgmt</span>    <span class="comment"># Token entropy, fixation, logout invalidation</span>
+6. <span class="keyword">Business logic</span>  <span class="comment"># Price manipulation, workflow bypass</span>
+7. <span class="keyword">API testing</span>     <span class="comment"># Hidden endpoints, mass assignment, BOLA</span>
+</div>
+<div class="info-box tip"><div class="info-box-label">// FREE PRACTICE</div>PortSwigger Web Security Academy (portswigger.net/web-security) is the best free web app security training in existence. Interactive labs for every vulnerability type — built by the creators of Burp Suite.</div>`,
+    quiz:[
+      {q:"What is the OWASP Top 10?",opts:["A list of the top 10 hacking tools","A ranking of the 10 most dangerous hacker groups","A regularly updated list of the most critical web application security vulnerabilities","A certification for web security professionals"],answer:2,exp:"The OWASP Top 10 lists the most critical web application security vulnerabilities based on real-world breach data — it's the standard reference for web security testing and development."},
+      {q:"In web app testing, what does 'authorization testing' specifically check for?",opts:["Whether passwords are stored securely","Whether users can access or modify resources belonging to other users","Whether the login page is protected by HTTPS","Whether session tokens expire correctly"],answer:1,exp:"Authorization testing checks IDOR and privilege escalation — can you access user B's data while authenticated as user A? Can a standard user access admin functions?"},
+      {q:"A tester changes the price of an item to -£100 in a purchase request and the site processes it as a refund. What vulnerability is this?",opts:["SQL injection in the pricing engine","Cross-site scripting on the payment page","Business logic vulnerability — the application doesn't validate price constraints","Broken authentication on the checkout flow"],answer:2,exp:"Business logic flaws are vulnerabilities in application workflow rather than code — the application does exactly what the code says, but the logic allows unintended actions like price manipulation."}
+    ]},
+    {id:'l6-5',title:'Writing Security Reports',content:`
+<div class="lesson-h1">Writing Security Reports</div>
+<div class="lesson-lead">Finding vulnerabilities is half the job. Communicating them clearly enough that they actually get fixed is the other half. A good security report is the difference between a finding being remediated and ignored.</div>
+<div class="lesson-h2">Report Structure</div>
+<div class="code-block">
+1. <span class="keyword">Executive Summary</span>    <span class="comment">// For management: risk level, business impact, key findings</span>
+2. <span class="keyword">Scope & Methodology</span>   <span class="comment">// What was tested, how, dates, limitations</span>
+3. <span class="keyword">Findings</span>              <span class="comment">// Each vulnerability documented individually</span>
+4. <span class="keyword">Remediation Roadmap</span>   <span class="comment">// Prioritized fix list: Critical → High → Medium → Low</span>
+5. <span class="keyword">Appendices</span>            <span class="comment">// Raw output, evidence, technical details</span>
+</div>
+<div class="lesson-h2">Per-Finding Documentation</div>
+<p>Each finding needs:</p>
+<ul class="lesson-list">
+  <li><strong>Title:</strong> Clear, specific — "SQL Injection in /api/users search parameter" not "SQL injection found"</li>
+  <li><strong>Severity:</strong> Critical / High / Medium / Low / Informational — use CVSS scoring</li>
+  <li><strong>Description:</strong> What the vulnerability is and why it exists</li>
+  <li><strong>Evidence:</strong> Screenshots, request/response pairs, proof-of-concept</li>
+  <li><strong>Impact:</strong> What an attacker can actually do — be specific</li>
+  <li><strong>Remediation:</strong> Exact steps to fix it, not just "sanitize inputs"</li>
+</ul>
+<div class="lesson-h2">CVSS Scoring</div>
+<p><span class="hl">CVSS</span> (Common Vulnerability Scoring System) gives vulnerabilities a 0–10 score based on: attack vector, complexity, privileges required, user interaction, confidentiality/integrity/availability impact. Critical = 9–10, High = 7–8.9, Medium = 4–6.9.</p>
+<div class="info-box"><div class="info-box-label">// THE REAL TEST</div>Show your report to someone non-technical. If they can't understand what the risk is to the business, rewrite the executive summary. Management decides remediation budgets — they need to understand why it matters.</div>`,
+    quiz:[
+      {q:"Who is the Executive Summary section of a pentest report written for?",opts:["The development team who will fix the issues","Junior security analysts reviewing findings","Technical architects designing the remediation","Management who need to understand business risk without technical details"],answer:3,exp:"The Executive Summary is written for non-technical management who decide remediation budgets. It covers risk level and business impact — not technical vulnerability details."},
+      {q:"What CVSS score range indicates a Critical severity vulnerability?",opts:["5.0 — 6.9","7.0 — 8.9","9.0 — 10.0","4.0 — 6.9"],answer:2,exp:"CVSS scores of 9.0–10.0 are Critical. High is 7.0–8.9, Medium 4.0–6.9, Low 0.1–3.9. Critical findings typically require immediate remediation."},
+      {q:"What makes a remediation recommendation actually useful to developers?",opts:["A long list of similar CVEs for reference","Telling them to 'improve security practices'","Specific, actionable steps — e.g. 'use parameterized queries with mysqli_prepare()' not just 'sanitize inputs'","Linking to the OWASP Top 10 page"],answer:2,exp:"Vague remediation advice ('fix the injection') doesn't get acted on. Specific steps with exact code patterns, library recommendations, and configuration changes give developers what they actually need to remediate."}
     ]}
   ]
 },
@@ -1148,6 +1496,70 @@ GET /api/user/<span class="keyword">1</span>/profile
       {q:"What is an IDOR vulnerability?",opts:["Injecting malicious SQL code into unprotected database queries","Accessing other users' objects by changing IDs without permission checks","Stealing session cookies via injected JavaScript on the page","Forging authenticated cross-site requests to perform actions"],answer:1,exp:"IDOR lets attackers access other users' data by changing IDs in requests when the server doesn't verify ownership."},
       {q:"You change /api/order/100 to /api/order/101 and see another customer's order. This is?",opts:["An SQL injection vulnerability in the order retrieval query","A privilege escalation gaining elevated access to the system","An IDOR vulnerability — server didn't check ownership of order 101","An XSS attack injecting script into the order API endpoint"],answer:2,exp:"This is a classic IDOR — the server returned data for ID 101 without checking if you own that order."},
       {q:"Which of these is a broken authentication vulnerability?",opts:["Storing all password hashes using the bcrypt algorithm securely","No account lockout allowing unlimited password guessing attempts","Requiring multi-factor authentication for every user login","Using HTTPS for all authentication and session management traffic"],answer:1,exp:"No account lockout allows attackers to try unlimited passwords — a classic broken authentication implementation flaw."}
+    ]},
+    {id:'l8-4',title:'Security Headers',content:`
+<div class="lesson-h1">Security Headers</div>
+<div class="lesson-lead">HTTP response headers are one of the cheapest security wins available. Adding a few headers to your web server can eliminate entire classes of attacks with a single line of configuration.</div>
+<div class="lesson-h2">Essential Security Headers</div>
+<div class="code-block">
+<span class="comment"># Content Security Policy — controls what can execute on your page</span>
+Content-Security-Policy: default-src 'self'; script-src 'self'
+<span class="comment"># Blocks inline scripts and external JS → kills most XSS</span>
+
+<span class="comment"># HSTS — forces HTTPS, prevents SSL stripping</span>
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+<span class="comment"># Prevents clickjacking — stops your page being iframed</span>
+X-Frame-Options: DENY
+
+<span class="comment"># Prevents MIME type sniffing attacks</span>
+X-Content-Type-Options: nosniff
+
+<span class="comment"># Controls what info is sent in Referer header</span>
+Referrer-Policy: strict-origin-when-cross-origin
+
+<span class="comment"># Disables dangerous browser features</span>
+Permissions-Policy: camera=(), microphone=(), geolocation=()
+</div>
+<div class="lesson-h2">Content Security Policy Deep Dive</div>
+<p>CSP is the most powerful security header. By specifying exactly which sources scripts, styles, images, and other resources can load from, you eliminate XSS attacks even if injection occurs — the browser simply won't execute scripts from unauthorized sources.</p>
+<div class="lesson-h2">Clickjacking</div>
+<p>A <span class="hl">clickjacking</span> attack loads your page in a hidden iframe over a fake page. The victim thinks they're clicking one thing but they're actually clicking your page's buttons — transferring money, changing settings, etc. <span class="hl-amber">X-Frame-Options: DENY</span> or <span class="hl-amber">CSP: frame-ancestors 'none'</span> prevents your page from being framed.</p>
+<div class="info-box tip"><div class="info-box-label">// CHECK YOUR SITE</div>securityheaders.com scans any URL and grades its security headers. Most sites fail. Adding these headers takes 10 minutes in nginx or Apache config and eliminates entire attack categories.</div>`,
+    quiz:[
+      {q:"What does the Content-Security-Policy header primarily protect against?",opts:["SQL injection attacks on the backend","Cross-site scripting — by restricting what scripts can execute on your page","Brute force attacks on login forms","Man-in-the-middle attacks on the network"],answer:1,exp:"CSP tells the browser which sources are permitted to load scripts and other resources. Even if an attacker injects script, the browser won't execute it if it violates the policy — blocking most XSS."},
+      {q:"What is a clickjacking attack?",opts:["Stealing credentials via a fake login page","Injecting scripts that track mouse clicks","Loading a target page in a hidden iframe so victims click its elements unknowingly","Intercepting click events via network traffic analysis"],answer:2,exp:"Clickjacking overlays a target site in a transparent iframe over a fake page. Victims think they're clicking on the visible fake content, but actually interact with the target site's elements."},
+      {q:"What does HSTS (HTTP Strict Transport Security) prevent?",opts:["Cross-site scripting attacks","SQL injection via HTTP parameters","SSL stripping attacks — forces browsers to always use HTTPS","Clickjacking via iframe embedding"],answer:2,exp:"HSTS tells browsers to always use HTTPS for this domain, even if linked via HTTP. This prevents SSL stripping attacks where an attacker downgrades the connection to unencrypted HTTP."}
+    ]},
+    {id:'l8-5',title:'API Security',content:`
+<div class="lesson-h1">API Security</div>
+<div class="lesson-lead">Modern applications run on APIs. APIs have a completely different attack surface than traditional web apps — and most are built without adequate security testing.</div>
+<div class="lesson-h2">Why APIs Are Uniquely Risky</div>
+<p>APIs expose raw data and functionality directly. Where a web UI might show "Welcome, John" with no edit button, the underlying API might have <span class="hl-red">PUT /api/users/1337</span> wide open. The UI hides functionality — the API exposes everything.</p>
+<div class="lesson-h2">OWASP API Security Top 10</div>
+<ul class="lesson-list">
+  <li><span class="hl">BOLA</span> (Broken Object Level Auth) — API version of IDOR. /api/orders/12345 should check ownership.</li>
+  <li><span class="hl">Broken Auth</span> — Weak tokens, no expiry, tokens in URLs (logged in proxy/server logs).</li>
+  <li><span class="hl">Mass Assignment</span> — Sending extra fields like {"role":"admin"} and the API blindly saves them all.</li>
+  <li><span class="hl">Excessive Data Exposure</span> — API returns full user object including password hash, internal IDs, private fields.</li>
+  <li><span class="hl">Rate Limiting Missing</span> — No limits on requests enabling enumeration, brute force, scraping.</li>
+  <li><span class="hl">Injection</span> — SQLi, command injection via API parameters — same as web apps, often less tested.</li>
+</ul>
+<div class="lesson-h2">Mass Assignment Example</div>
+<div class="code-block">
+<span class="comment">// Update profile endpoint</span>
+PATCH /api/users/me
+{"name": "Alice", "email": "alice@example.com"}
+
+<span class="comment">// Attacker adds extra field:</span>
+{"name": "Alice", "email": "alice@example.com", <span class="keyword">"role": "admin"</span>}
+<span class="comment">// If API blindly saves all fields from request → instant admin</span>
+</div>
+<div class="info-box tip"><div class="info-box-label">// TEST APIS WITH</div>Burp Suite (intercept all requests), Postman (manual API testing), ffuf (endpoint discovery), jwt_tool (JWT token attacks). Always test for BOLA — change object IDs and see what returns.</div>`,
+    quiz:[
+      {q:"What is BOLA (Broken Object Level Authorization) in API security?",opts:["An injection attack targeting API endpoints","Accessing other users' data by changing object IDs — the API version of IDOR","Brute forcing API authentication tokens","Intercepting API traffic to steal session tokens"],answer:1,exp:"BOLA is the API equivalent of IDOR — requesting /api/orders/12346 instead of /api/orders/12345 and getting another user's data because the API doesn't verify ownership."},
+      {q:"What is a mass assignment vulnerability?",opts:["Sending the same request to multiple API endpoints","An API blindly saving all fields from a request, allowing attackers to set fields like 'role' or 'isAdmin'","Sending massive requests to overwhelm the API","Assigning the same token to multiple users"],answer:1,exp:"Mass assignment occurs when an API takes all fields from a request and saves them without filtering. An attacker can send unexpected fields like 'role: admin' and have them applied directly."},
+      {q:"Why does returning a full object with sensitive fields in API responses create risk?",opts:["It makes the API slower","It violates HTTP standards","Sensitive fields like password hashes, internal IDs, or private data in responses leak information attackers can exploit","It breaks the application's frontend"],answer:2,exp:"Excessive data exposure means APIs return fields the client doesn't need — but attackers do. Password hashes, internal account IDs, or private flags can all be leveraged to escalate attacks."}
     ]}
   ]
 },
@@ -1270,6 +1682,71 @@ mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords"
       {q:"What is Active Directory?",opts:["A built-in Windows file manager for organizing documents","Microsoft's central system for managing users and permissions across an org","A type of network firewall built directly into Windows Server","A Windows backup system used for disaster recovery purposes"],answer:1,exp:"Active Directory is the central identity and access management system in Windows enterprise environments."},
       {q:"What is LSASS and why do attackers target it?",opts:["A Windows network service that monitors and logs traffic","A Windows process that holds credential material in memory","A Windows firewall process that filters all inbound connections","A Windows backup service that stores encrypted system data"],answer:1,exp:"LSASS manages authentication and holds cached credentials in memory. Attackers dump it to extract plaintext passwords and hashes."},
       {q:"What is a 'Pass the Hash' attack?",opts:["Cracking a password hash offline using a GPU cluster","Authenticating to systems using just the hash without cracking it","Intercepting password hashes as they traverse the network","A type of SQL injection specifically targeting password hash storage"],answer:1,exp:"Pass the Hash uses the password hash directly for authentication — no cracking needed. Windows NTLM authentication accepts hashes directly."}
+    ]},
+    {id:'l9-4',title:'Log Analysis for Security',content:`
+<div class="lesson-h1">Log Analysis for Security</div>
+<div class="lesson-lead">Logs are the evidence trail of everything that happens on a system. Knowing where to look and what to look for is one of the most practical skills in both offensive and defensive security.</div>
+<div class="lesson-h2">Key Log Locations on Linux</div>
+<div class="code-block">
+/var/log/auth.log       <span class="comment"># SSH logins, sudo usage, authentication</span>
+/var/log/syslog         <span class="comment"># General system events</span>
+/var/log/apache2/       <span class="comment"># Web server access and error logs</span>
+/var/log/nginx/         <span class="comment"># Nginx access and error logs</span>
+/var/log/fail2ban.log   <span class="comment"># IPs blocked for brute force</span>
+~/.bash_history         <span class="comment"># Commands run by a user (can be cleared)</span>
+
+<span class="comment"># Check for failed SSH attempts (brute force evidence)</span>
+grep "Failed password" /var/log/auth.log | tail -20
+
+<span class="comment"># Find successful logins from unusual IPs</span>
+grep "Accepted password" /var/log/auth.log
+</div>
+<div class="lesson-h2">Windows Event IDs to Know</div>
+<ul class="lesson-list">
+  <li><span class="hl">4624</span> — Successful logon. Logon type 3 = network, type 10 = remote interactive</li>
+  <li><span class="hl">4625</span> — Failed logon. Many in succession = brute force</li>
+  <li><span class="hl">4720</span> — User account created. Unexpected = potential backdoor</li>
+  <li><span class="hl">4732</span> — User added to security group. Unexpected = privilege escalation</li>
+  <li><span class="hl">4688</span> — Process created. Suspicious processes = malware execution</li>
+  <li><span class="hl">7045</span> — New service installed. Common persistence mechanism</li>
+</ul>
+<div class="lesson-h2">Log Poisoning</div>
+<p>Attackers aware of log monitoring may attempt <span class="hl-red">log poisoning</span> — injecting malicious content into log files (via User-Agent, request paths, etc.) that gets executed if logs are viewed in a vulnerable interface. This is why log viewers must sanitize output.</p>`,
+    quiz:[
+      {q:"Which Linux log file shows SSH login attempts?",opts:["/var/log/syslog","/var/log/auth.log","/var/log/messages","/etc/security/access.log"],answer:1,exp:"/var/log/auth.log records all authentication events on Linux — SSH logins (both successful and failed), sudo usage, and PAM authentication events."},
+      {q:"Windows Event ID 4720 indicates what?",opts:["A successful network logon","A failed authentication attempt","A new user account was created","A service was installed on the system"],answer:2,exp:"Event ID 4720 logs user account creation. An unexpected account appearing — especially outside change management windows — is a red flag for attacker persistence or backdoor accounts."},
+      {q:"What is log poisoning?",opts:["Deleting log files to remove evidence","Injecting malicious content into logs that gets executed when logs are viewed in a vulnerable interface","Flooding logs with false events to hide real ones","Encrypting log files to make them unreadable"],answer:1,exp:"Log poisoning injects malicious payloads (like XSS or command injection) into log data via user-controlled inputs (User-Agent, URLs). If a vulnerable log viewer renders the logs, the payload executes."}
+    ]},
+    {id:'l9-5',title:'Cloud & Container Security',content:`
+<div class="lesson-h1">Cloud & Container Security</div>
+<div class="lesson-lead">Modern infrastructure runs in the cloud on containers. The attack surface is different from traditional servers — misconfiguration is the #1 cloud vulnerability, not software exploitation.</div>
+<div class="lesson-h2">How Containers Work</div>
+<p><span class="hl">Containers</span> (Docker, Kubernetes) package applications with their dependencies in isolated processes. Unlike VMs, containers share the host OS kernel — making them lighter but with a different security boundary.</p>
+<div class="code-block">
+<span class="comment"># Docker security issues to check</span>
+docker ps                    <span class="comment"># What's running?</span>
+docker inspect [container]  <span class="comment"># Check for privileged mode, mounts</span>
+
+<span class="comment"># Dangerous: privileged container = nearly host escape</span>
+docker run --privileged ...  <span class="comment">← can escape to host</span>
+
+<span class="comment"># Dangerous: mounting host filesystem</span>
+docker run -v /:/host ...    <span class="comment">← attacker reads/writes host</span>
+</div>
+<div class="lesson-h2">Container Escape</div>
+<p>A <span class="hl">container escape</span> lets an attacker break out of a container and access the host system. Common paths: privileged containers, exposed Docker sockets (<span class="hl-red">/var/run/docker.sock</span> mounted = game over), kernel vulnerabilities, dangerous capabilities (CAP_SYS_ADMIN).</p>
+<div class="lesson-h2">Cloud Misconfigurations</div>
+<ul class="lesson-list">
+  <li><strong>Public S3 buckets:</strong> Misconfigured AWS S3 buckets have leaked terabytes of sensitive data from major companies</li>
+  <li><strong>Overpermissioned IAM roles:</strong> EC2 instances with admin permissions = full account takeover via SSRF</li>
+  <li><strong>Exposed Kubernetes dashboard:</strong> Unauthenticated kubectl access = cluster compromise</li>
+  <li><strong>Security groups open to 0.0.0.0/0:</strong> Database ports open to the entire internet</li>
+</ul>
+<div class="info-box tip"><div class="info-box-label">// CLOUD TESTING TOOLS</div>ScoutSuite (multi-cloud auditing), Prowler (AWS), Trivy (container image scanning), kube-bench (Kubernetes CIS benchmarks) — all free and open source.</div>`,
+    quiz:[
+      {q:"Why is a privileged Docker container a major security risk?",opts:["It uses more CPU and memory","It can communicate with other containers","It has nearly unrestricted access to the host system, enabling container escape","It disables network isolation between containers"],answer:2,exp:"Privileged containers get nearly all Linux capabilities and can access host devices. An attacker inside a privileged container can typically escape to the host system and gain full control."},
+      {q:"A Docker container has /var/run/docker.sock mounted. Why is this dangerous?",opts:["It causes the container to crash under load","It allows container-to-container communication","It gives the container control over the Docker daemon — allowing creation of privileged containers and host access","It exposes the container's filesystem to the network"],answer:2,exp:"The Docker socket gives access to the Docker API. An attacker inside a container with this socket can create new privileged containers, escape to the host, or pivot through the infrastructure."},
+      {q:"What is the #1 cause of cloud security incidents?",opts:["Zero-day exploits in cloud provider infrastructure","Advanced persistent threat actors","Misconfiguration — public buckets, open security groups, overpermissioned roles","Weak encryption on data at rest"],answer:2,exp:"Misconfiguration causes the vast majority of cloud breaches — public S3 buckets, overpermissioned IAM roles, open security groups, and exposed management interfaces are all configuration errors, not software vulnerabilities."}
     ]}
   ]
 },
@@ -1374,6 +1851,65 @@ mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords"
       {q:"Which certification is most respected for offensive security / pentesting?",opts:["CompTIA Security+","CEH","CISSP","OSCP"],answer:3,exp:"OSCP (Offensive Security Certified Professional) is the industry gold standard for pentesting — a 24-hour practical exam where you must actually hack machines under time pressure."},
       {q:"What makes OSCP different from most other certifications?",opts:["It's the cheapest","It's fully theoretical with a written exam","It's a 24-hour practical exam where you actually compromise machines — no multiple choice","It only covers web security"],answer:2,exp:"OSCP is a hands-on exam — you have 24 hours to compromise a set of machines and write a report. It proves real skill, not just memorized theory."},
       {q:"For someone starting in cybersecurity with no background, what's the best first certification?",opts:["OSCP","CISSP","CompTIA Security+","CEH"],answer:2,exp:"CompTIA Security+ is the standard entry-level cert — vendor-neutral, widely recognized by employers, and provides solid foundational security knowledge without requiring experience."}
+    ]},
+    {id:'l10-4',title:'Bug Bounty Hunting',content:`
+<div class="lesson-h1">Bug Bounty Hunting</div>
+<div class="lesson-lead">Bug bounty programs pay you to find real vulnerabilities in real systems. It's how many security professionals earn while they learn — and how some make a full-time income.</div>
+<div class="lesson-h2">How Bug Bounties Work</div>
+<p>Companies publish <span class="hl">scope</span> (what you're allowed to test) and a reward table. You find a vulnerability, submit a detailed report, and if valid and in-scope, get paid. Payouts range from $50 for low-severity findings to $1M+ for critical vulnerabilities in major platforms.</p>
+<div class="lesson-h2">Major Platforms</div>
+<ul class="lesson-list">
+  <li><span class="hl">HackerOne</span> — largest platform. Google, Uber, Twitter/X, GitHub all run programs here</li>
+  <li><span class="hl">Bugcrowd</span> — enterprise-focused. Good variety of programs</li>
+  <li><span class="hl">Intigriti</span> — European-focused, growing fast</li>
+  <li><span class="hl">Synack</span> — invite-only, higher payouts, vetted researchers</li>
+  <li><span class="hl">Public programs directly</span> — Google VRP, Apple Security Research, Microsoft MSRC</li>
+</ul>
+<div class="lesson-h2">How to Start</div>
+<div class="code-block">
+1. <span class="keyword">Learn</span>        <span class="comment"># PortSwigger Academy, TryHackMe, this curriculum</span>
+2. <span class="keyword">Tools</span>        <span class="comment"># Burp Suite, ffuf, nuclei, amass for recon</span>
+3. <span class="keyword">Target</span>       <span class="comment"># Start with less competitive programs (newer, smaller)</span>
+4. <span class="keyword">Recon</span>        <span class="comment"># Map the attack surface before testing anything</span>
+5. <span class="keyword">Test</span>         <span class="comment"># Focus on business logic, IDOR, auth — often missed</span>
+6. <span class="keyword">Report</span>       <span class="comment"># Clear title, reproduction steps, impact, PoC</span>
+</div>
+<div class="lesson-h2">What Gets Rewarded Most</div>
+<p>Account takeover chains, authentication bypasses, and high-impact IDOR findings pay the most. XSS with real impact (not just alert(1)) pays well. SQLi is increasingly rare on major platforms. Business logic flaws are underreported and often pay well.</p>
+<div class="info-box danger"><div class="info-box-label">// STAY IN SCOPE</div>Testing out-of-scope assets voids your reward and can result in legal action — even if you find something critical. Read the scope carefully. When in doubt, ask the program. Never test production systems outside programs.</div>`,
+    quiz:[
+      {q:"What is a bug bounty program's 'scope'?",opts:["The maximum payout for critical findings","The legal agreement you sign before participating","The defined assets and systems you are authorized to test","The minimum severity required to submit a report"],answer:2,exp:"Scope defines what you're authorized to test. Testing out-of-scope assets — even if you find vulnerabilities — voids rewards and can result in legal consequences."},
+      {q:"Why are business logic vulnerabilities particularly valuable in bug bounties?",opts:["They pay more by default in all programs","They are the easiest to find with automated tools","They are often underreported since automated scanners miss them, reducing competition","They require less technical skill to exploit"],answer:2,exp:"Business logic flaws are missed by automated scanners and require manual exploration of application workflows. Lower competition means higher likelihood of finding unreported issues."},
+      {q:"When starting bug bounty hunting, why target less competitive programs first?",opts:["They pay more money per finding","They have weaker security making findings easier","Newer and less popular programs have fewer researchers — more chance of finding unreported vulnerabilities","They have simpler scope documents to read"],answer:2,exp:"Less competitive programs have fewer researchers hunting them — meaning more unreported vulnerabilities. Major programs like Google have thousands of active hunters, making first-finds on common vulnerabilities rare."}
+    ]},
+    {id:'l10-5',title:'Building Your Security Portfolio',content:`
+<div class="lesson-h1">Building Your Security Portfolio</div>
+<div class="lesson-lead">A portfolio demonstrates what you can actually do. In cybersecurity, a strong portfolio often matters more than a degree — and you can start building it right now.</div>
+<div class="lesson-h2">What Goes in a Security Portfolio</div>
+<ul class="lesson-list">
+  <li><span class="hl">CTF write-ups:</span> Detailed walkthroughs of how you solved CTF challenges. Shows methodology, not just results. Post on a blog (GitHub Pages is free).</li>
+  <li><span class="hl">HackTheBox/TryHackMe profiles:</span> Public profiles showing completed machines and points. Employers check these.</li>
+  <li><span class="hl">Bug bounty hall of fame mentions:</span> Even low-severity findings show you found real vulnerabilities in production systems.</li>
+  <li><span class="hl">Home lab documentation:</span> Document what you built and what you learned. Shows initiative and hands-on work.</li>
+  <li><span class="hl">Security tools/scripts:</span> GitHub repos showing code you've written — automation tools, custom scripts, PoCs.</li>
+  <li><span class="hl">Research and blog posts:</span> Deep dives into vulnerabilities, techniques, or tools you've studied.</li>
+</ul>
+<div class="lesson-h2">The Write-Up Formula</div>
+<div class="code-block">
+Good CTF write-up structure:
+1. <span class="keyword">Initial reconnaissance</span> — what you scanned/found first
+2. <span class="keyword">Attack path</span>         — step-by-step what you tried and why
+3. <span class="keyword">Dead ends</span>           — what didn't work (shows real process)
+4. <span class="keyword">Exploitation</span>        — the actual exploit with commands/screenshots
+5. <span class="keyword">What you learned</span>    — key takeaway or new technique discovered
+</div>
+<div class="lesson-h2">LinkedIn and Networking</div>
+<p>Cybersecurity is a small industry. The person who reviews your CV may know someone you've worked with or talked to in a community. Engage in: security Twitter/X, Discord servers, local BSides conferences (often free), DEF CON communities. Being known matters.</p>
+<div class="info-box tip"><div class="info-box-label">// START NOW</div>You don't need to wait until you're "good enough" to start documenting. Write up the TryHackMe room you just completed. Document your home lab setup. The habit of documenting is itself a skill — and it compounds.</div>`,
+    quiz:[
+      {q:"Why are CTF write-ups valuable for a security portfolio?",opts:["They prove you have a university degree in security","They show methodology and problem-solving process, not just that you got the flag","They are required for bug bounty program applications","They demonstrate knowledge of compliance frameworks"],answer:1,exp:"Write-ups show how you think — your recon approach, what you tried, why, and what you learned. This demonstrates real security thinking far better than a score or certification."},
+      {q:"What makes HackTheBox and TryHackMe profiles useful for job applications?",opts:["They provide official security certifications","They are legally required for security roles in most countries","They show quantifiable hands-on practice on realistic security challenges that employers can verify","They prove knowledge of programming languages"],answer:2,exp:"Public HackTheBox and TryHackMe profiles show verifiable, hands-on practice on realistic systems. Employers in the security industry actively check these profiles as evidence of genuine skill."},
+      {q:"When should you start documenting your security learning for a portfolio?",opts:["After completing at least three certifications","After landing your first security job","After completing an advanced CTF event","Now — even documenting beginner work builds the habit and compounds over time"],answer:3,exp:"Starting documentation early — even with beginner work — builds the habit, creates a record of your progression, and produces real portfolio content. Waiting until you're 'good enough' means never starting."}
     ]}
   ]
 }
@@ -1855,6 +2391,7 @@ let chatBusy = false;
 function toggleChat() {
   chatOpen = !chatOpen;
   document.getElementById('chatColumn').classList.toggle('open', chatOpen);
+  document.getElementById('chatToggle').style.display = chatOpen ? 'none' : 'flex';
   if (chatOpen && chatHistory.length === 0) {
     appendChatMsg('ai', `Ask me anything about cybersecurity — concepts, attacks, defenses, tools, or anything from the lessons.`);
   }
