@@ -1744,8 +1744,8 @@ function toggleMatrixMode() {
     drawMatrix();
     showToast('// MATRIX MODE ACTIVATED');
 
-    // Stop rain after 2.5s — theme stays
-    matrixTimer = setTimeout(stopRain, 2500);
+    // Stop rain after 1s — theme stays
+    matrixTimer = setTimeout(stopRain, 1000);
   } else {
     // Revert theme, stop rain immediately
     document.body.classList.remove('matrix-mode');
