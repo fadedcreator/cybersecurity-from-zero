@@ -1884,24 +1884,23 @@ async function sendChat() {
   document.getElementById('chatMessages').scrollTop = 99999;
 
   try {
-    const res = await fetch('https://text.pollinations.ai/', {
+    const res = await fetch('https://text.pollinations.ai/openai', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
+        model:'openai',
         messages:[
           {role:'system', content: CHAT_SYSTEM},
-          ...chatHistory.slice(-10) // keep last 10 turns for context
-        ],
-        model:'openai-large',
-        seed: Math.floor(Math.random()*10000),
-        private: true
+          ...chatHistory.slice(-10)
+        ]
       })
     });
 
     thinkEl.remove();
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const reply = await res.text();
+    const data = await res.json();
+    const reply = data.choices?.[0]?.message?.content || 'No response received.';
     chatHistory.push({role:'assistant', content: reply});
     appendChatMsg('ai', reply);
 
