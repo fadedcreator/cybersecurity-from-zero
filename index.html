@@ -2307,6 +2307,9 @@ function openLesson(lessonId) {
 // ═══════════════════════════════════════════════════════════
 function buildQuizHTML(lesson) {
   const shuffled = balanceQuizLengths(shuffleQuizOptions(lesson.quiz));
+  // Store quiz data in global so event delegation can read it safely (no onclick string escaping)
+  window._quizData = window._quizData || {};
+  window._quizData[lesson.id] = shuffled;
   let html = `<div id="quizSection"><div class="quiz-header">// KNOWLEDGE CHECK</div>`;
   shuffled.forEach((q, qi) => {
     html += `<div class="quiz-q" id="q-${qi}">
@@ -2314,7 +2317,7 @@ function buildQuizHTML(lesson) {
       <div class="q-options">
         ${q.opts.map((opt, oi) => `
           <button class="q-opt" id="opt-${qi}-${oi}"
-            onclick="answerQ('${lesson.id}',${qi},${oi},${q.answer},'${escStr(q.exp)}')">
+            data-lid="${lesson.id}" data-qi="${qi}" data-oi="${oi}" data-ans="${q.answer}" data-exp="${qi}">
             <span class="opt-letter">${String.fromCharCode(65+oi)}</span>${opt}
           </button>`).join('')}
       </div>
@@ -2489,13 +2492,15 @@ function retryQuiz(lessonId) {
 
 function buildQuizHTML(lesson) {
   const shuffled = shuffleQuizOptions(balanceQuizLengths(JSON.parse(JSON.stringify(lesson.quiz))));
+  window._quizData = window._quizData || {};
+  window._quizData[lesson.id] = shuffled;
   let html = '<div class="quiz-section">';
   shuffled.forEach((q, qi) => {
     html += `<div class="quiz-q" id="qq-${qi}">
       <div class="q-text"><span class="q-num">Q${qi+1}</span>${q.q}</div>
       <div class="q-opts">${q.opts.map((opt, oi) => `
         <button class="q-opt" id="opt-${qi}-${oi}"
-          onclick="answerQ('${lesson.id}',${qi},${oi},${q.answer},'${q.exp.replace(/'/g,"\'")}')">
+          data-lid="${lesson.id}" data-qi="${qi}" data-oi="${oi}" data-ans="${q.answer}" data-exp="${qi}">
           <span class="q-letter">${String.fromCharCode(65+oi)}</span>${opt}
         </button>`).join('')}
       </div>
@@ -2870,6 +2875,22 @@ window.addEventListener('resize', () => { if (matrixRAF) initMatrix(); });
 // ═══════════════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════════════
+// Event delegation for quiz buttons — avoids all onclick string escaping issues
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.q-opt');
+  if (!btn || btn.classList.contains('locked')) return;
+  const lid = btn.dataset.lid;
+  const qi = parseInt(btn.dataset.qi);
+  const oi = parseInt(btn.dataset.oi);
+  const ans = parseInt(btn.dataset.ans);
+  const expIdx = parseInt(btn.dataset.exp);
+  // Get explanation from stored quiz data
+  const quizData = window._quizData && window._quizData[lid];
+  if (!quizData) return;
+  const exp = quizData[expIdx] ? quizData[expIdx].exp : '';
+  answerQ(lid, qi, oi, ans, exp);
+});
+
 loadState();
 buildSidebar();
 buildHomeModules();
