@@ -2287,7 +2287,7 @@ function openLesson(lessonId) {
   const entry = flat.find(x => x.lesson.id === lessonId);
   if (!entry) return;
   state.currentLesson = lessonId;
-  state.quizAnswers = {};
+  state.quizAnswers = {_lessonId: lessonId};
   showLessonView();
   document.getElementById('breadcrumb').innerHTML =
     `MODULE ${entry.mi+1}: ${entry.mod.title} <span>›</span> ${entry.lesson.title}`;
@@ -2337,6 +2337,8 @@ function buildQuizHTML(lesson) {
 }
 
 function answerQ(lessonId, qi, chosen, correct, explanation) {
+  // Scope quizAnswers to the current lesson — prevent bleed between lessons
+  if (state.quizAnswers._lessonId !== lessonId) state.quizAnswers = {_lessonId: lessonId};
   if (state.quizAnswers[qi] !== undefined) return;
   state.quizAnswers[qi] = chosen;
   const flat = flatLessons();
@@ -2368,13 +2370,13 @@ function answerQ(lessonId, qi, chosen, correct, explanation) {
     delete state.wrongAnswers[key];
   }
   saveState();
-  if (Object.keys(state.quizAnswers).length === totalQ) showQuizResult(lessonId, totalQ);
+  if (Object.keys(state.quizAnswers).filter(k => k !== '_lessonId').length === totalQ) showQuizResult(lessonId, totalQ);
 }
 
 function showQuizResult(lessonId, totalQ) {
   const flat = flatLessons();
   const entry = flat.find(x => x.lesson.id === lessonId);
-  const correct = entry.lesson.quiz.filter((q, qi) => state.quizAnswers[qi] === q.answer).length;
+  const correct = entry.lesson.quiz.filter((q, qi) => state.quizAnswers[qi] !== undefined && state.quizAnswers[qi] === q.answer).length;
   const pct = Math.round((correct / totalQ) * 100);
   const isFirstCompletion = !state.completed.has(lessonId);
   const xpEarned = isFirstCompletion ? Math.round((correct / totalQ) * 100) : 0;
@@ -2468,7 +2470,7 @@ function markComplete(lessonId) {
 //  RETRY QUIZ
 // ═══════════════════════════════════════════════════════════
 function retryQuiz(lessonId) {
-  state.quizAnswers = {};
+  state.quizAnswers = {_lessonId: lessonId};
   const flat = flatLessons();
   const entry = flat.find(x => x.lesson.id === lessonId);
   if (!entry) return;
