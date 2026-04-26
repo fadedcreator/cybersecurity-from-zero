@@ -2201,7 +2201,7 @@ function buildSidebar(filter='') {
     anyResults = true;
 
     const isActive = state.currentLesson && mod.lessons.some(l => l.id === state.currentLesson);
-    const isOpen = q ? true : (isActive || (!state.currentLesson && mi === 0));
+    const isOpen = true; // all modules always expanded
     const block = document.createElement('div');
     block.className = 'module-block';
     block.innerHTML = `
@@ -2236,9 +2236,7 @@ function buildSidebar(filter='') {
 }
 
 function toggleModule(el) {
-  const wasOpen = el.classList.contains('open');
-  document.querySelectorAll('.module-header').forEach(h => h.classList.remove('open'));
-  if (!wasOpen) el.classList.add('open');
+  el.classList.toggle('open');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -2404,7 +2402,9 @@ function showQuizResult(lessonId, totalQ) {
 }
 
 function restoreCompletedQuiz(lesson) {
+  // Populate quizAnswers so locked buttons stay locked if user clicks them
   lesson.quiz.forEach((q, qi) => {
+    state.quizAnswers[qi] = q.answer; // mark all as answered correctly for display
     q.opts.forEach((_, oi) => {
       const btn = document.getElementById(`opt-${qi}-${oi}`);
       if (!btn) return;
