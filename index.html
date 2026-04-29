@@ -160,6 +160,7 @@ ul.lesson-list li::before{content:'▸';position:absolute;left:0;color:var(--gre
 .quiz-header{font-size:10px;letter-spacing:3px;color:var(--text-dim);margin-bottom:20px;display:flex;align-items:center;gap:10px}
 .quiz-header::after{content:'';flex:1;height:1px;background:var(--border2)}
 .quiz-q{margin-bottom:24px}
+.q-num{color:var(--green);font-family:var(--display);font-size:11px;margin-right:8px;opacity:0.7;letter-spacing:1px}
 .q-text{font-size:13px;color:var(--text);margin-bottom:12px;padding:12px;background:var(--bg2);border-left:2px solid var(--green)}
 .q-options{display:flex;flex-direction:column;gap:6px}
 .q-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border2);background:var(--bg3);cursor:pointer;font-family:var(--font);font-size:12px;color:var(--text-dim);transition:all 0.15s;text-align:left;width:100%}
@@ -462,10 +463,10 @@ const CURRICULUM = [
 <div class="lesson-h1">Protocols: TCP, UDP & HTTP</div>
 <div class="lesson-lead">Computers need agreed rules for communication. These are called protocols. The internet runs on a stack of them.</div>
 <div class="lesson-h2">TCP — The Reliable One</div>
-<p><span class="hl">TCP</span> (Transmission Control Protocol) guarantees delivery. It breaks data into packets, sends them, and ensures every one arrives in the right order. Before sending, TCP does a <span class="hl-amber">three-way handshake</span>:</p>
+<p><span class="hl">TCP</span> (Transmission Control Protocol) guarantees delivery. It breaks data into packets, sends them, and ensures every one arrives in the right order. Before sending, TCP does a <span class="hl-amber">three-way handshake</span> — a short back-and-forth to establish a connection before any data flows:</p>
 <div class="code-block">
-Client → Server: <span class="keyword">SYN</span>      <span class="comment">// "I want to connect"</span>
-Server → Client: <span class="keyword">SYN-ACK</span>  <span class="comment">// "OK, I'm listening"</span>
+Client → Server: <span class="keyword">SYN</span>      <span class="comment">// "I want to connect" (SYN = synchronize)</span>
+Server → Client: <span class="keyword">SYN-ACK</span>  <span class="comment">// "Acknowledged, I'm ready" (ACK = acknowledge)</span>
 Client → Server: <span class="keyword">ACK</span>      <span class="comment">// "Got it, let's go"</span>
 </div>
 <p>A <span class="hl-red">SYN flood</span> attack sends thousands of SYN packets without completing the handshake — exhausting the server's resources with half-open connections until it crashes.</p>
@@ -496,9 +497,9 @@ Client → Server: <span class="keyword">ACK</span>      <span class="comment">/
 </div>
 <div class="lesson-h2">Well-Known Ports</div>
 <ul class="lesson-list">
-  <li><span class="hl">22</span> — SSH (remote shell)</li><li><span class="hl">80</span> — HTTP</li><li><span class="hl">443</span> — HTTPS</li>
-  <li><span class="hl">21</span> — FTP (unencrypted file transfer)</li><li><span class="hl">25</span> — SMTP (email)</li>
-  <li><span class="hl">3389</span> — RDP (Windows remote desktop)</li><li><span class="hl">53</span> — DNS</li>
+  <li><span class="hl">22</span> — SSH (Secure Shell — encrypted remote terminal access)</li><li><span class="hl">80</span> — HTTP (HyperText Transfer Protocol — unencrypted web)</li><li><span class="hl">443</span> — HTTPS (HTTP Secure — encrypted web)</li>
+  <li><span class="hl">21</span> — FTP (File Transfer Protocol — unencrypted file transfer)</li><li><span class="hl">25</span> — SMTP (Simple Mail Transfer Protocol — the protocol for sending email)</li>
+  <li><span class="hl">3389</span> — RDP (Remote Desktop Protocol — Windows remote GUI access)</li><li><span class="hl">53</span> — DNS</li>
 </ul>
 <div class="lesson-h2">Port Scanning</div>
 <p>One of the first things an attacker does is <span class="hl">port scan</span> — probing to find open ports and what's running. The standard tool: <span class="hl-amber">Nmap</span>.</p>
@@ -527,7 +528,7 @@ nmap -sV <span class="string">192.168.1.1</span>
 5. <span class="keyword">Session</span>       <span class="comment">// Managing connections between applications</span>
 4. <span class="keyword">Transport</span>     <span class="comment">// TCP/UDP — ports, reliability, flow control</span>
 3. <span class="keyword">Network</span>       <span class="comment">// IP addresses, routing between networks</span>
-2. <span class="keyword">Data Link</span>     <span class="comment">// MAC addresses, switches, ARP</span>
+2. <span class="keyword">Data Link</span>     <span class="comment">// MAC addresses, switches, ARP (Address Resolution Protocol)</span>
 1. <span class="keyword">Physical</span>      <span class="comment">// Cables, WiFi radio signals, hardware</span>
 </div>
 <div class="lesson-h2">Attacks Mapped to Layers</div>
@@ -641,7 +642,7 @@ traceroute google.com
 3. <span class="keyword">DELIVERY</span>          <span class="comment">// Send the weapon (phishing, USB)</span>
 4. <span class="keyword">EXPLOITATION</span>      <span class="comment">// Trigger the vulnerability</span>
 5. <span class="keyword">INSTALLATION</span>      <span class="comment">// Install persistent access</span>
-6. <span class="keyword">C2</span>               <span class="comment">// Command & Control</span>
+6. <span class="keyword">C2</span>               <span class="comment">// Command & Control — attacker remotely controls malware on the victim</span>
 7. <span class="keyword">ACTIONS</span>          <span class="comment">// Achieve the goal (steal, encrypt)</span>
 </div>
 <div class="lesson-h2">Ransomware Example Mapped</div>
@@ -863,11 +864,11 @@ cursor.execute(query, (username,))
 <div class="lesson-h2">Attack Methods</div>
 <ul class="lesson-list">
   <li><span class="hl">Evil Twin WiFi:</span> Fake access point — all traffic routes through attacker</li>
-  <li><span class="hl">ARP Spoofing:</span> Poisons ARP tables on local network</li>
-  <li><span class="hl">SSL Stripping:</span> Downgrades HTTPS to HTTP</li>
+  <li><span class="hl">ARP Spoofing:</span> ARP (Address Resolution Protocol) maps IP addresses to hardware addresses on a local network. Attacker sends fake ARP replies poisoning devices into routing traffic through the attacker instead of the real gateway</li>
+  <li><span class="hl">SSL Stripping:</span> Downgrades the connection from HTTPS to unencrypted HTTP. SSL/TLS is the encryption layer — stripping it makes all traffic readable. (SSL is the older name for what is now called TLS.)</li>
   <li><span class="hl">DNS Spoofing:</span> Returns attacker's IP for legitimate domains</li>
 </ul>
-<div class="info-box tip"><div class="info-box-label">// DEFENSE</div>HTTPS encrypts traffic so intercepted data is unreadable. Never do banking on public WiFi without a VPN. Always check the padlock + correct domain.</div>`,
+<div class="info-box tip"><div class="info-box-label">// DEFENSE</div>HTTPS (HTTP Secure) encrypts your connection using TLS — even if someone intercepts the traffic, they see only scrambled data. Always check the padlock icon and verify the domain is correct before entering any credentials.</div>`,
     quiz:[
       {q:"In a MITM attack, what does the attacker do?",opts:["Floods the connection with traffic until the server crashes","Sits between two parties intercepting their traffic","Injects malicious code directly into the web server application","Steals credentials by scanning open ports on the target network"],answer:1,exp:"In MITM, the attacker positions themselves between communicating parties — both sides think they're talking to each other, but all traffic passes through the attacker."},
       {q:"What is an 'Evil Twin' WiFi attack?",opts:["Intercepting traffic by placing a hardware tap on the physical ethernet cable","Creating a fake access point mimicking a legitimate one","Cracking WPA2 passwords by capturing and replaying the handshake","Injecting forged DNS replies to redirect users on an existing access point"],answer:1,exp:"An Evil Twin is a rogue WiFi access point that looks identical to a legitimate one. When you connect, your traffic flows through the attacker."},
@@ -1022,7 +1023,8 @@ stored = bcrypt.hash(<span class="string">"mypassword"</span>)
    <span class="string">"I support TLS 1.3, here are my cipher options"</span>
 
 2. Server → Client: <span class="keyword">ServerHello</span> + Certificate
-   <span class="string">"Let's use AES-256. Here's my SSL cert."</span>
+   <span class="string">"Let's use AES-256. Here's my certificate."</span>
+   <span class="comment">// People often say "SSL cert" — SSL is just the older name for what is now called TLS</span>
 
 3. Client verifies certificate:
    Is it signed by a trusted CA? Domain match? Expired?
@@ -1066,7 +1068,7 @@ is_valid = verify(signature, hash_from_doc, public_key)
   <li><strong>Certificate Authority (CA):</strong> Trusted entity that signs certificates after verifying identity</li>
   <li><strong>Digital certificate:</strong> Contains: public key + identity + CA signature + expiry</li>
   <li><strong>Chain of trust:</strong> Your browser trusts root CAs → root signs intermediate CA → intermediate signs website cert</li>
-  <li><strong>Certificate Revocation:</strong> CRL and OCSP let browsers check if a cert has been revoked before expiry</li>
+  <li><strong>Certificate Revocation:</strong> CRL (Certificate Revocation List) and OCSP (Online Certificate Status Protocol) let browsers check if a cert has been revoked before its expiry date — important if a private key is stolen</li>
 </ul>
 <div class="info-box danger"><div class="info-box-label">// ATTACK: CERTIFICATE SPOOFING</div>If an attacker can get a CA to issue a fraudulent certificate for your domain, they can impersonate you with a valid cert. This has happened. Certificate Transparency logs (public audit of all issued certs) help detect it.</div>`,
     quiz:[
@@ -1221,10 +1223,10 @@ Rule: <span class="keyword">IF</span> new_admin_account_created <span class="key
   <li><span class="hl">Firewall logs:</span> Allowed/denied connections, port scans, anomalous traffic</li>
   <li><span class="hl">DNS logs:</span> Domain lookups — C2 beaconing shows up as regular lookups to unusual domains</li>
   <li><span class="hl">Web server logs:</span> Error spikes, unusual paths, SQLi/XSS attempts in request strings</li>
-  <li><span class="hl">EDR telemetry:</span> Process executions, file writes, network connections per endpoint</li>
+  <li><span class="hl">EDR telemetry:</span> EDR (Endpoint Detection &amp; Response) — software on each device tracking process executions, file writes, and network connections</li>
 </ul>
 <div class="lesson-h2">Popular SIEM Tools</div>
-<p><span class="hl-amber">Splunk</span> (industry standard, expensive), <span class="hl-amber">Microsoft Sentinel</span> (cloud-native, Azure), <span class="hl-amber">Elastic SIEM</span> (open source core), <span class="hl-amber">IBM QRadar</span> (enterprise). Splunk queries and Elastic KQL are worth learning.</p>`,
+<p><span class="hl-amber">Splunk</span> (industry standard, expensive), <span class="hl-amber">Microsoft Sentinel</span> (cloud-native, Azure), <span class="hl-amber">Elastic SIEM</span> (open source core), <span class="hl-amber">IBM QRadar</span> (enterprise). Splunk has its own query language (SPL); Elastic uses KQL (Kibana Query Language). Worth learning either one.</p>`,
     quiz:[
       {q:"What does SIEM primarily do?",opts:["Blocks malware on individual endpoints","Aggregates logs from across an organization and correlates them to detect threats","Scans network traffic for vulnerabilities","Manages user access permissions centrally"],answer:1,exp:"SIEM aggregates logs from many sources and applies correlation rules to detect threats that would be invisible looking at any single log source in isolation."},
       {q:"Why are DNS logs valuable for detecting attacker activity?",opts:["DNS logs show which users logged in","Malware C2 communication often shows up as regular DNS queries to unusual domains","DNS logs contain user passwords","DNS only logs failed connection attempts"],answer:1,exp:"Malware often uses DNS for C2 — regular lookups to unusual or algorithmically generated domains that blend in. DNS logs reveal beaconing patterns invisible in network traffic alone."},
@@ -1307,7 +1309,7 @@ Rule: <span class="keyword">IF</span> new_admin_account_created <span class="key
 <div class="lesson-h2">The Toolkit</div>
 <ul class="lesson-list">
   <li><span class="hl">Nmap:</span> Network scanner — ports, services, OS fingerprinting</li>
-  <li><span class="hl">Metasploit:</span> Exploit framework — hundreds of ready-to-use exploits for known CVEs</li>
+  <li><span class="hl">Metasploit:</span> Exploit framework — hundreds of ready-to-use exploits for known CVEs (CVE = Common Vulnerabilities and Exposures, the standard numbering system for publicly disclosed security flaws, e.g. CVE-2021-44228 = Log4Shell)</li>
   <li><span class="hl">Burp Suite:</span> Web app testing proxy — intercept/modify HTTP, find SQLi, XSS, auth issues</li>
   <li><span class="hl">Wireshark:</span> Packet analyzer — capture and inspect all network traffic in real time</li>
   <li><span class="hl">Hashcat / John:</span> Password crackers — crack stolen hashes</li>
@@ -1587,7 +1589,7 @@ POST /api/fetch-preview
 <ul class="lesson-list">
   <li><span class="hl">Reflected XSS:</span> Malicious script is in the URL, reflected back immediately. Victim must click a crafted link.</li>
   <li><span class="hl">Stored XSS:</span> Script is saved to the server (e.g., in a comment or profile field) and runs for every user who views it. More dangerous — no crafted link needed.</li>
-  <li><span class="hl">DOM-based XSS:</span> Vulnerability is in client-side JavaScript, not the server response.</li>
+  <li><span class="hl">DOM-based XSS:</span> The DOM (Document Object Model) is the browser's live map of the page — the tree of elements that JavaScript can read and modify. DOM XSS happens when JavaScript reads attacker-controlled input (like a URL hash) and writes it directly to the page without sanitizing it. The server never sees the payload — making it invisible to server-side defenses.</li>
 </ul>
 <div class="lesson-h2">Attack Example</div>
 <div class="code-block">
@@ -1754,7 +1756,7 @@ PATCH /api/users/me
       {q:"What is BOLA (Broken Object Level Authorization) in API security?",opts:["An injection attack targeting API endpoints","Accessing other users' data by changing object IDs — the API version of IDOR","Brute forcing API authentication tokens","Intercepting API traffic to steal session tokens"],answer:1,exp:"BOLA is the API equivalent of IDOR — requesting /api/orders/12346 instead of /api/orders/12345 and getting another user's data because the API doesn't verify ownership."},
       {q:"What is a mass assignment vulnerability?",opts:["Sending the same request to multiple API endpoints","An API blindly saving all fields from a request, allowing attackers to set fields like 'role' or 'isAdmin'","Sending massive requests to overwhelm the API","Assigning the same token to multiple users"],answer:1,exp:"Mass assignment occurs when an API takes all fields from a request and saves them without filtering. An attacker can send unexpected fields like 'role: admin' and have them applied directly."},
       {q:"Why does returning a full object with sensitive fields in API responses create risk?",opts:["It makes the API slower","It violates HTTP standards","Sensitive fields like password hashes, internal IDs, or private data in responses leak information attackers can exploit","It breaks the application's frontend"],answer:2,exp:"Excessive data exposure means APIs return fields the client doesn't need — but attackers do. Password hashes, internal account IDs, or private flags can all be leveraged to escalate attacks."},
-      {q:"What are JWTs and what makes them vulnerable to algorithm confusion attacks?",opts:["Encrypted session identifiers stored in the browser's local storage securely","Self-contained tokens with claims and a signature — vulnerable when the algorithm field is trusted without validation enabling algorithm confusion","A replacement for session cookies providing automatic stronger authentication","API keys that rotate automatically every 24 hours for improved security posture"],answer:1,exp:"JWTs contain a header (algorithm), payload (claims), and signature. Algorithm confusion: if the server accepts both RS256 (asymmetric) and HS256 (symmetric), an attacker changes alg to HS256 and signs with the server's public key as the HMAC secret — creating a valid signature the server accepts."},
+      {q:"What are JWTs and what makes them vulnerable to algorithm confusion attacks?",opts:["Encrypted session identifiers stored in the browser's local storage securely","Self-contained tokens with claims and a signature — vulnerable when the algorithm field is trusted without validation enabling algorithm confusion","A replacement for session cookies providing automatic stronger authentication","API keys that rotate automatically every 24 hours for improved security posture"],answer:1,exp:"JWTs (JSON Web Tokens — a compact format for securely passing information between parties) contain three base64-encoded sections: a header (which algorithm was used), payload (the actual data — user ID, roles, expiry), and a signature proving the content hasn't been tampered with. Algorithm confusion: if the server accepts both RS256 (asymmetric) and HS256 (symmetric), an attacker changes alg to HS256 and signs with the server's public key as the HMAC secret — creating a valid signature the server accepts."},
       {q:"Why is rate limiting on API endpoints a critical security control?",opts:["Without rate limiting APIs respond more slowly degrading user experience","Without rate limiting attackers can enumerate valid IDs, brute force credentials, and scrape all data in seconds","Rate limiting is only necessary for paid commercial APIs to enforce billing tiers","Without rate limiting the API server crashes under legitimate peak traffic loads"],answer:1,exp:"No rate limiting enables: brute forcing authentication (try millions of passwords), user enumeration (which emails exist), IDOR enumeration (which object IDs are valid), and bulk data scraping of entire databases. Rate limiting turns attacks that complete in seconds into attacks that would take years."}
     ]}
   ]
@@ -1866,7 +1868,7 @@ C:\Windows\System32\config\SAM
 <span class="comment"># NTDS.dit — Active Directory database (domain hashes)</span>
 C:\Windows\NTDS\ntds.dit
 
-<span class="comment"># LSASS process — holds credential material in memory</span>
+<span class="comment"># LSASS process (Local Security Authority Subsystem Service — the Windows process that handles logins) — holds credential material in memory</span>
 <span class="comment"># Tool: Mimikatz extracts plaintext passwords from LSASS</span>
 mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords"
 </div>
@@ -1877,7 +1879,7 @@ mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords"
   <li><span class="hl">Domain administrator:</span> Full control of the entire domain — every machine, every user</li>
   <li><span class="hl">SYSTEM:</span> Highest local privilege — what most malware tries to achieve</li>
 </ul>
-<div class="info-box danger"><div class="info-box-label">// PASS THE HASH</div>On Windows, you often don't need to crack a password hash to use it. Tools like Mimikatz let attackers authenticate using just the hash — "Pass the Hash." This is why password rotation alone isn't enough.</div>`,
+<div class="info-box danger"><div class="info-box-label">// PASS THE HASH</div>On Windows, authentication often uses NTLM (NT LAN Manager — Windows' password hashing format). You don't need to crack the hash to use it. Tools like Mimikatz extract NTLM hashes from memory, and those hashes can be passed directly to authenticate — "Pass the Hash." This is why password rotation alone isn't enough: if the hash was stolen before the rotation, it may still work.</div>`,
     quiz:[
       {q:"What is Active Directory?",opts:["A built-in Windows file manager for organizing documents","Microsoft's central system for managing users and permissions across an org","A type of network firewall built directly into Windows Server","A Windows backup system used for disaster recovery purposes"],answer:1,exp:"Active Directory is the central identity and access management system in Windows enterprise environments."},
       {q:"What is LSASS and why do attackers target it?",opts:["A Windows network service that monitors and logs traffic","A Windows process that holds credential material in memory","A Windows firewall process that filters all inbound connections","A Windows backup service that stores encrypted system data"],answer:1,exp:"LSASS manages authentication and holds cached credentials in memory. Attackers dump it to extract plaintext passwords and hashes."},
@@ -1925,7 +1927,7 @@ grep "Accepted password" /var/log/auth.log
 <div class="lesson-h1">Cloud & Container Security</div>
 <div class="lesson-lead">Modern infrastructure runs in the cloud on containers. The attack surface is different from traditional servers — misconfiguration is the #1 cloud vulnerability, not software exploitation.</div>
 <div class="lesson-h2">How Containers Work</div>
-<p><span class="hl">Containers</span> (Docker, Kubernetes) package applications with their dependencies in isolated processes. Unlike VMs, containers share the host OS kernel — making them lighter but with a different security boundary.</p>
+<p><span class="hl">Containers</span> (Docker, Kubernetes) package applications with their dependencies in isolated processes. Unlike VMs (Virtual Machines — fully isolated systems each with their own OS), containers share the host OS kernel — making them much lighter and faster to start, but with a thinner security boundary between them.</p>
 <div class="code-block">
 <span class="comment"># Docker security issues to check</span>
 docker ps                    <span class="comment"># What's running?</span>
@@ -2313,7 +2315,7 @@ function buildQuizHTML(lesson) {
   let html = `<div id="quizSection"><div class="quiz-header">// KNOWLEDGE CHECK</div>`;
   shuffled.forEach((q, qi) => {
     html += `<div class="quiz-q" id="q-${qi}">
-      <div class="q-text">${q.q}</div>
+      <div class="q-text"><span class="q-num">Q${qi+1}</span> ${q.q}</div>
       <div class="q-options">
         ${q.opts.map((opt, oi) => `
           <button class="q-opt" id="opt-${qi}-${oi}"
@@ -2497,7 +2499,7 @@ function buildQuizHTML(lesson) {
   let html = '<div class="quiz-section">';
   shuffled.forEach((q, qi) => {
     html += `<div class="quiz-q" id="qq-${qi}">
-      <div class="q-text"><span class="q-num">Q${qi+1}</span>${q.q}</div>
+      <div class="q-text"><span class="q-num">Q${qi+1}</span> ${q.q}</div>
       <div class="q-opts">${q.opts.map((opt, oi) => `
         <button class="q-opt" id="opt-${qi}-${oi}"
           data-lid="${lesson.id}" data-qi="${qi}" data-oi="${oi}" data-ans="${q.answer}" data-exp="${qi}">
@@ -2560,7 +2562,7 @@ function renderReviewQuestion() {
   counter.textContent = `${state.reviewIndex + 1} / ${state.reviewQueue.length}`;
   rc.innerHTML = `<div class="review-q-card">
     <div class="review-q-source">${q.modTitle} › ${q.lesTitle}</div>
-    <div class="q-text">${q.q}</div>
+    <div class="q-text"><span class="q-num">REVIEW</span> ${q.q}</div>
     <div class="q-options">
       ${q.opts.map((opt, oi) => `
         <button class="q-opt" id="rv-opt-${oi}" onclick="answerReview(${oi},${q.answer},'${escStr(q.exp)}','${q.lessonId}',${q.qi})">
